@@ -3,3 +3,4 @@ psycopg2-binary>=2.9
 PyYAML>=6.0
 gunicorn>=22.0
 openai>=1.30
+whitenoise>=6.7
