@@ -1,0 +1,209 @@
+{% extends "vsm/base.html" %}
+{% load i18n %}
+
+{% block title %}🤖 {% trans "Generate VSM" %} – {{ project.name }}{% endblock %}
+
+{% block extra_head %}
+<style>
+  .step-card { border-left: 4px solid #6366f1; margin-bottom: .5rem; }
+  .step-row-0 { border-left-color: #2563eb; }
+  .step-row-1 { border-left-color: #9333ea; }
+  .metric-badge { font-size: .8rem; }
+  .analysis-box { background: #f1f5f9; border-radius: .5rem; padding: 1rem; white-space: pre-wrap; }
+  .response-bar { height: 8px; border-radius: 4px; transition: width .3s; }
+  .spinner-border { width: 1.2rem; height: 1.2rem; border-width: .15em; }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+  <div class="col-12">
+    <nav aria-label="breadcrumb">
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{% url 'vsm:index' %}">{% trans "Home" %}</a></li>
+        <li class="breadcrumb-item"><a href="{% url 'vsm:project_list' %}">{% trans "Projects" %}</a></li>
+        <li class="breadcrumb-item"><a href="{% url 'vsm:project_detail' slug=project.slug %}">{{ project.name }}</a></li>
+        <li class="breadcrumb-item active">{% trans "Generate VSM with AI" %}</li>
+      </ol>
+    </nav>
+    <h2>🤖 {% trans "Generate Value Stream Map with AI" %}</h2>
+    <p class="text-muted">
+      {% blocktrans with name=project.name color=project.color %}The AI will analyze all questionnaire responses from project <strong style="color: {{ color }}">{{ name }}</strong> and generate a complete value stream map with time metrics.{% endblocktrans %}
+    </p>
+  </div>
+</div>
+
+<!-- Response Summary -->
+<div class="row mb-4">
+  <div class="col-12">
+    <div class="card shadow-sm">
+      <div class="card-header"><strong>📊 {% trans "Available responses" %}</strong> — {{ total_responses }} total</div>
+      <div class="card-body">
+        {% if total_responses == 0 %}
+        <div class="alert alert-warning mb-0">
+          ⚠️ {% trans "There are no questionnaire responses for this project." %}
+          {% trans "Teams must" %} <a href="{% url 'vsm:project_detail' slug=project.slug %}">{% trans "fill out the questionnaires" %}</a> {% trans "first." %}
+        </div>
+        {% else %}
+        <div class="row g-2">
+          {% for cat in response_summary %}
+          <div class="col-md-4 col-lg-3">
+            <div class="d-flex align-items-center gap-2 p-2 rounded" style="background: {{ cat.color }}10;">
+              <div class="response-bar flex-grow-1" style="background: {{ cat.color }}; width: {{ cat.count }}0%;"></div>
+              <span class="small fw-bold" style="color: {{ cat.color }};">{{ cat.name }}</span>
+              <span class="badge bg-secondary">{{ cat.count }}</span>
+            </div>
+          </div>
+          {% endfor %}
+        </div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Status / Configuration -->
+{% if not ai_configured %}
+<div class="row mb-4">
+  <div class="col-12">
+    <div class="alert alert-danger">
+      <strong>⚙️ {% trans "AI not configured" %}</strong><br>
+      {% trans "To generate VSMs with AI, go to the admin panel and configure the connection:" %}
+      <div class="mt-2">
+        <a href="/admin/vsm/aiconfiguration/1/change/" class="btn btn-sm btn-outline-danger">
+          ⚙️ {% trans "Configure AI in Admin" %}
+        </a>
+        <span class="text-muted ms-2 small">
+          (Admin → VSM → AI Configuration: API key, endpoint, {% trans "model" %})
+        </span>
+      </div>
+    </div>
+  </div>
+</div>
+{% endif %}
+
+<!-- Error display -->
+{% if error %}
+<div class="row mb-4">
+  <div class="col-12">
+    <div class="alert alert-danger">
+      <strong>❌ Error:</strong> {{ error }}
+    </div>
+  </div>
+</div>
+{% endif %}
+
+<!-- Generate Button -->
+{% if not generated %}
+<div class="row mb-4">
+  <div class="col-12 text-center">
+    <form method="post">
+      {% csrf_token %}
+      <input type="hidden" name="generate" value="1">
+      <button type="submit"
+              class="btn btn-lg btn-primary {% if not ai_configured or total_responses == 0 %}disabled{% endif %}"
+              {% if not ai_configured or total_responses == 0 %}disabled{% endif %}
+              id="btn-generate"
+              onclick="this.disabled=true; this.innerHTML='<span class=\'spinner-border me-2\'></span>Generando VSM con IA...'; this.form.submit();">
+        🤖 {% trans "Generate VSM with AI" %}
+      </button>
+      <p class="text-muted small mt-2">
+        {% blocktrans with count=total_responses %}The AI will analyze {{ count }} responses and generate a complete value stream map.{% endblocktrans %}
+      </p>
+    </form>
+  </div>
+</div>
+{% endif %}
+
+<!-- Generated VSM Preview -->
+{% if generated %}
+<div class="row mb-4">
+  <div class="col-12">
+    <div class="card shadow-sm border-success">
+      <div class="card-header bg-success text-white d-flex justify-content-between align-items-center">
+        <strong>✅ {% trans "VSM Generated" %}: {{ generated.name }}</strong>
+        <span class="badge bg-white text-success">{{ generated.steps|length }} {% trans "steps" %}</span>
+      </div>
+      <div class="card-body">
+        {% if generated.description %}
+        <p class="mb-3">{{ generated.description }}</p>
+        {% endif %}
+
+        <!-- Steps Preview -->
+        <h5>📋 {% trans "Process steps" %}</h5>
+        <div class="table-responsive mb-3">
+          <table class="table table-sm table-hover">
+            <thead class="table-light">
+              <tr>
+                <th>#</th>
+                <th>{% trans "Step" %}</th>
+                <th>{% trans "Team" %}</th>
+                <th>{% trans "Row" %}</th>
+                <th>{% trans "Work Time (h)" %}</th>
+                <th>{% trans "Wait Time (h)" %}</th>
+                <th>{% trans "Rework" %} %</th>
+                <th>{% trans "People" %}</th>
+                <th>{% trans "Flow" %}</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for step in generated.steps %}
+              <tr>
+                <td>{{ step.order }}</td>
+                <td><strong>{{ step.name }}</strong>
+                  {% if step.description %}<br><small class="text-muted">{{ step.description }}</small>{% endif %}
+                </td>
+                <td><span class="badge bg-secondary">{{ step.category_slug|default:"—" }}</span></td>
+                <td>{{ step.row }}</td>
+                <td>{{ step.work_time }}</td>
+                <td>{{ step.wait_time }}</td>
+                <td>{% widthratio step.loop_factor 1 100 %}%</td>
+                <td>{{ step.num_people }}</td>
+                <td>{{ step.flow_type }}</td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+
+        <!-- AI Analysis -->
+        {% if generated.analysis %}
+        <h5>🧠 {% trans "AI Analysis" %}</h5>
+        <div class="analysis-box mb-3">{{ generated.analysis }}</div>
+        {% endif %}
+
+        <!-- Save Form -->
+        <div class="d-flex gap-3">
+          <form method="post" action="{% url 'vsm:save_generated_vsm' slug=project.slug %}">
+            {% csrf_token %}
+            <input type="hidden" name="vsm_json" value="{{ generated_json }}">
+            <button type="submit" class="btn btn-success btn-lg">
+              💾 {% trans "Save VSM to database" %}
+            </button>
+          </form>
+          <form method="post">
+            {% csrf_token %}
+            <input type="hidden" name="generate" value="1">
+            <button type="submit" class="btn btn-outline-primary btn-lg"
+                    onclick="this.disabled=true; this.innerHTML='<span class=\'spinner-border me-2\'></span>Regenerando...'; this.form.submit();">
+              🔄 {% trans "Regenerate" %}
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Raw JSON (collapsible) -->
+<div class="row mb-4">
+  <div class="col-12">
+    <details>
+      <summary class="text-muted small">{% trans "View full generated JSON" %}</summary>
+      <pre class="bg-dark text-light p-3 rounded mt-2" style="max-height: 400px; overflow: auto;">{{ generated_json }}</pre>
+    </details>
+  </div>
+</div>
+{% endif %}
+
+{% endblock %}

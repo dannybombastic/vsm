@@ -1,0 +1,60 @@
+{% load static %}
+{% load i18n %}
+<!DOCTYPE html>
+<html lang="{{ LANGUAGE_CODE }}">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% trans "Login" %} – ATHINA VSM</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+        rel="stylesheet"
+        integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH"
+        crossorigin="anonymous">
+  <link rel="stylesheet" href="{% static 'vsm/style.css' %}">
+  <style>
+    body { background: linear-gradient(135deg, #1e1e2f 0%, #2d2d44 100%); min-height: 100vh; }
+    .login-card { max-width: 420px; margin: 8vh auto; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="login-card">
+      <div class="card shadow-lg border-0">
+        <div class="card-body p-4">
+          <div class="text-center mb-4">
+            <h3>📊 ATHINA VSM</h3>
+            <p class="text-muted">{% trans "Sign in to continue" %}</p>
+          </div>
+
+          {% if form.errors %}
+          <div class="alert alert-danger">
+            {% trans "Invalid username or password. Please try again." %}
+          </div>
+          {% endif %}
+
+          <form method="post">
+            {% csrf_token %}
+            <div class="mb-3">
+              <label for="id_username" class="form-label">{% trans "Username" %}</label>
+              <input type="text" name="username" id="id_username"
+                     class="form-control" autofocus required>
+            </div>
+            <div class="mb-3">
+              <label for="id_password" class="form-label">{% trans "Password" %}</label>
+              <input type="password" name="password" id="id_password"
+                     class="form-control" required>
+            </div>
+            <input type="hidden" name="next" value="{{ next }}">
+            <button type="submit" class="btn btn-primary w-100">
+              {% trans "Sign in" %}
+            </button>
+          </form>
+        </div>
+        <div class="card-footer text-center text-muted small">
+          ATHINA LOT1 &middot; DevSecOps Team
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

@@ -1,0 +1,70 @@
+name: athina-vsm-deploy
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    types:
+      - opened
+      - synchronize
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment: athina-vsm
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Prepare deployment package
+        run: |
+          echo "Creating deployment package..."
+          tar -czf deploy-athina-vsm.tar.gz \
+            --exclude='__pycache__' \
+            --exclude='*.pyc' \
+            --exclude='.env' \
+            --exclude='staticfiles' \
+            --exclude='.git' \
+            --exclude='.github' \
+            app/
+          echo "✅ Deployment package created"
+          ls -lh deploy-athina-vsm.tar.gz
+
+      - name: Deploy to server
+        uses: dannybombastic/ssh-scp-ssh-pipelines@v1.1.5
+        with:
+          host: ${{ secrets.REMOTE_HOST }}
+          port: 22
+          user: ${{ secrets.REMOTE_USER }}
+          pass: ${{ secrets.REMOTE_PASS }}
+          connect_timeout: 30s
+          first_ssh: |
+            echo "Preparing deployment directory..."
+            mkdir -p /home/dannybombastic/athina-vsm
+            cd /home/dannybombastic/athina-vsm
+            echo "Stopping current containers..."
+            cd app 2>/dev/null && docker compose down 2>/dev/null || true
+            cd /home/dannybombastic/athina-vsm
+            echo "Cleaning old files (keeping .env and pgdata)..."
+            find . -maxdepth 1 ! -name '.' ! -name '.env' -type f -exec rm -f {} +
+            rm -rf app/vsm app/vsm_project app/locale app/manage.py app/requirements.txt app/Dockerfile app/docker-compose.yml app/entrypoint.sh 2>/dev/null || true
+            echo "✅ Cleanup completed"
+          scp: |
+            "deploy-athina-vsm.tar.gz" => /home/dannybombastic/athina-vsm/
+          last_ssh: |
+            echo "Extracting deployment package..."
+            cd /home/dannybombastic/athina-vsm
+            tar -xzf deploy-athina-vsm.tar.gz
+            rm deploy-athina-vsm.tar.gz
+            echo "✅ Files extracted"
+            ls -la app/
+            echo "Building and starting Docker containers..."
+            cd app
+            docker compose up -d --build
+            echo "✅ Deployment completed successfully!"
+            docker compose ps
+            echo "🔍 Checking app health..."
+            sleep 10
+            docker compose logs --tail=30

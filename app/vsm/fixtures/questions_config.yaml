@@ -1,0 +1,950 @@
+categories:
+  # ── 01 Developers ──────────────────────────────────────────────
+  - name: Developers
+    slug: developers
+    color: "#2563eb"
+    order: 1
+    description: Backend & frontend development teams
+    sections:
+      - code: A
+        title: "Team Identity"
+        order: 1
+        questions:
+          - key: dev_a1
+            label: "Team name and main responsibility"
+            type: text
+          - key: dev_a2
+            label: "Team members and roles"
+            type: textarea
+          - key: dev_a3
+            label: "Who is the direct client (consumer) of your deliverables?"
+            type: text
+          - key: dev_a4
+            label: "Who are the suppliers that feed your process?"
+            type: text
+
+      - code: B
+        title: "Process Steps"
+        order: 2
+        questions:
+          - key: dev_b1_feature
+            label: "Describe the steps for implementing a new feature (from requirement to production)"
+            type: textarea
+          - key: dev_b1_table
+            label: "Feature Process Metrics"
+            type: table
+            options:
+              columns: ["Step", "Avg Duration", "Wait Time", "% Complete & Accurate", "Who"]
+          - key: dev_b2_bugfix
+            label: "Describe the steps for fixing a production bug"
+            type: textarea
+          - key: dev_b2_table
+            label: "Bug Fix Process Metrics"
+            type: table
+            options:
+              columns: ["Step", "Avg Duration", "Wait Time", "% Complete & Accurate", "Who"]
+          - key: dev_b3_review
+            label: "Describe your code review / PR process"
+            type: textarea
+
+      - code: C
+        title: "Handoffs & Dependencies"
+        order: 3
+        questions:
+          - key: dev_c1
+            label: "What do you receive from upstream teams, and in what format?"
+            type: textarea
+          - key: dev_c2
+            label: "What do you deliver downstream, and to whom?"
+            type: textarea
+          - key: dev_c3
+            label: "Where do most bottlenecks or wait times occur?"
+            type: textarea
+          - key: dev_c4
+            label: "Handoff quality: how often do you receive incomplete information?"
+            type: checklist
+            options:
+              - "Rarely (<10%)"
+              - "Sometimes (10-30%)"
+              - "Often (30-60%)"
+              - "Very often (>60%)"
+
+      - code: D
+        title: "Pain Points & Waste"
+        order: 4
+        questions:
+          - key: dev_d1
+            label: "Top 3 sources of waste or rework in your process"
+            type: textarea
+          - key: dev_d2
+            label: "What types of waste do you observe most?"
+            type: checklist
+            options:
+              - "Waiting / Idle time"
+              - "Rework / Defects"
+              - "Context switching"
+              - "Manual processes"
+              - "Unnecessary handoffs"
+              - "Over-engineering"
+              - "Incomplete requirements"
+
+      - code: E
+        title: "Tools & Systems"
+        order: 5
+        questions:
+          - key: dev_e1
+            label: "Primary tools used across the development lifecycle"
+            type: textarea
+          - key: dev_e2
+            label: "Integration pain points between tools"
+            type: textarea
+
+      - code: F
+        title: "Improvement Ideas"
+        order: 6
+        questions:
+          - key: dev_f1
+            label: "If you could change one thing to improve flow, what would it be?"
+            type: textarea
+          - key: dev_f2
+            label: "Quick wins that require minimal investment"
+            type: textarea
+
+      - code: G
+        title: "VSM Metrics (for automated map generation)"
+        order: 7
+        questions:
+          - key: dev_g1_work_time
+            label: "Average total work time (touch/process time) for your main deliverable, in hours"
+            type: text
+            order: 1
+          - key: dev_g2_wait_time
+            label: "Average wait time before you can start working after receiving a request, in hours"
+            type: text
+            order: 2
+          - key: dev_g3_rework_pct
+            label: "What percentage of work typically requires rework/corrections? (0-100)"
+            type: text
+            order: 3
+          - key: dev_g4_people
+            label: "Typical number of people involved in your main process"
+            type: text
+            order: 4
+          - key: dev_g5_flow
+            label: "How does work typically arrive to your team?"
+            type: checklist
+            order: 5
+            options:
+              - "Push (assigned/directed to us)"
+              - "Pull (we pick from a queue/backlog)"
+          - key: dev_g6_steps
+            label: "Detailed per-step timing for your main process"
+            type: table
+            order: 6
+            options:
+              columns: ["Step Name", "Work Time (hours)", "Wait Time (hours)", "Rework %", "People"]
+
+  # ── 02 QA / Testing ────────────────────────────────────────────
+  - name: "QA / Testing"
+    slug: qa-testing
+    color: "#9333ea"
+    order: 2
+    description: Quality assurance and testing teams
+    sections:
+      - code: A
+        title: "Team Identity"
+        order: 1
+        questions:
+          - key: qa_a1
+            label: "Team name and main responsibility"
+            type: text
+          - key: qa_a2
+            label: "Team members and roles"
+            type: textarea
+          - key: qa_a3
+            label: "Who is the direct client of your testing results?"
+            type: text
+          - key: qa_a4
+            label: "Who supplies you with testable deliverables?"
+            type: text
+
+      - code: B
+        title: "Process Steps"
+        order: 2
+        questions:
+          - key: qa_b1_manual
+            label: "Steps for manual/exploratory testing"
+            type: textarea
+          - key: qa_b1_table
+            label: "Manual Testing Metrics"
+            type: table
+            options:
+              columns: ["Step", "Avg Duration", "Wait Time", "% Complete & Accurate", "Who"]
+          - key: qa_b2_auto
+            label: "Steps for automated test suite execution"
+            type: textarea
+          - key: qa_b2_table
+            label: "Automated Testing Metrics"
+            type: table
+            options:
+              columns: ["Step", "Avg Duration", "Wait Time", "% Complete & Accurate", "Who"]
+          - key: qa_b3_regression
+            label: "Regression testing approach"
+            type: textarea
+
+      - code: C
+        title: "Handoffs & Dependencies"
+        order: 3
+        questions:
+          - key: qa_c1
+            label: "What do you receive from developers and in what state?"
+            type: textarea
+          - key: qa_c2
+            label: "How do you communicate test results back?"
+            type: textarea
+          - key: qa_c3
+            label: "Where do bottlenecks typically occur?"
+            type: textarea
+          - key: qa_c4
+            label: "Handoff quality from upstream"
+            type: checklist
+            options:
+              - "Rarely incomplete (<10%)"
+              - "Sometimes (10-30%)"
+              - "Often (30-60%)"
+              - "Very often (>60%)"
+
+      - code: D
+        title: "Pain Points & Waste"
+        order: 4
+        questions:
+          - key: qa_d1
+            label: "Top 3 sources of waste or rework"
+            type: textarea
+          - key: qa_d2
+            label: "Common waste types"
+            type: checklist
+            options:
+              - "Waiting for builds"
+              - "Flaky tests"
+              - "Environment issues"
+              - "Incomplete test data"
+              - "Unclear requirements"
+              - "Manual repetitive tasks"
+
+      - code: E
+        title: "Tools & Systems"
+        order: 5
+        questions:
+          - key: qa_e1
+            label: "Testing tools and frameworks used"
+            type: textarea
+          - key: qa_e2
+            label: "Tool integration pain points"
+            type: textarea
+
+      - code: F
+        title: "Improvement Ideas"
+        order: 6
+        questions:
+          - key: qa_f1
+            label: "If you could change one thing to improve testing flow, what would it be?"
+            type: textarea
+          - key: qa_f2
+            label: "Quick wins"
+            type: textarea
+
+      - code: G
+        title: "VSM Metrics (for automated map generation)"
+        order: 7
+        questions:
+          - key: qa_g1_work_time
+            label: "Average total testing time (touch/process time) for a typical deliverable, in hours"
+            type: text
+            order: 1
+          - key: qa_g2_wait_time
+            label: "Average wait time before you can start testing after receiving a build, in hours"
+            type: text
+            order: 2
+          - key: qa_g3_rework_pct
+            label: "What percentage of test cycles require re-testing due to defects? (0-100)"
+            type: text
+            order: 3
+          - key: qa_g4_people
+            label: "Typical number of people involved in a test cycle"
+            type: text
+            order: 4
+          - key: qa_g5_flow
+            label: "How does testing work arrive to your team?"
+            type: checklist
+            order: 5
+            options:
+              - "Push (assigned/directed to us)"
+              - "Pull (we pick from a queue/backlog)"
+          - key: qa_g6_steps
+            label: "Detailed per-step timing for your testing process"
+            type: table
+            order: 6
+            options:
+              columns: ["Step Name", "Work Time (hours)", "Wait Time (hours)", "Rework %", "People"]
+
+  # ── 03 UX / Design ─────────────────────────────────────────────
+  - name: "UX / Design"
+    slug: ux-design
+    color: "#ea580c"
+    order: 3
+    description: User experience and interface design teams
+    sections:
+      - code: A
+        title: "Team Identity"
+        order: 1
+        questions:
+          - key: ux_a1
+            label: "Team name and main responsibility"
+            type: text
+          - key: ux_a2
+            label: "Team members and roles"
+            type: textarea
+          - key: ux_a3
+            label: "Who consumes your design deliverables?"
+            type: text
+          - key: ux_a4
+            label: "Who provides requirements/input for your design work?"
+            type: text
+
+      - code: B
+        title: "Process Steps"
+        order: 2
+        questions:
+          - key: ux_b1_design
+            label: "Steps for a new design (from research to handoff to dev)"
+            type: textarea
+          - key: ux_b1_table
+            label: "Design Process Metrics"
+            type: table
+            options:
+              columns: ["Step", "Avg Duration", "Wait Time", "% Complete & Accurate", "Who"]
+          - key: ux_b2_iteration
+            label: "Steps for design iteration / feedback cycle"
+            type: textarea
+
+      - code: C
+        title: "Handoffs & Dependencies"
+        order: 3
+        questions:
+          - key: ux_c1
+            label: "What do you receive from product/management?"
+            type: textarea
+          - key: ux_c2
+            label: "How do you hand off designs to developers?"
+            type: textarea
+          - key: ux_c3
+            label: "Where do bottlenecks occur?"
+            type: textarea
+
+      - code: D
+        title: "Pain Points & Waste"
+        order: 4
+        questions:
+          - key: ux_d1
+            label: "Top 3 sources of waste"
+            type: textarea
+          - key: ux_d2
+            label: "Common waste types"
+            type: checklist
+            options:
+              - "Unclear requirements"
+              - "Frequent scope changes"
+              - "Waiting for feedback"
+              - "Implementation does not match design"
+              - "No user research data"
+              - "Manual asset export"
+
+      - code: E
+        title: "Tools & Systems"
+        order: 5
+        questions:
+          - key: ux_e1
+            label: "Design and prototyping tools"
+            type: textarea
+          - key: ux_e2
+            label: "Tool integration issues"
+            type: textarea
+
+      - code: F
+        title: "Improvement Ideas"
+        order: 6
+        questions:
+          - key: ux_f1
+            label: "One change to improve design flow"
+            type: textarea
+          - key: ux_f2
+            label: "Quick wins"
+            type: textarea
+
+      - code: G
+        title: "VSM Metrics (for automated map generation)"
+        order: 7
+        questions:
+          - key: ux_g1_work_time
+            label: "Average total design time (touch/process time) for a typical deliverable, in hours"
+            type: text
+            order: 1
+          - key: ux_g2_wait_time
+            label: "Average wait time before you receive clear requirements to start, in hours"
+            type: text
+            order: 2
+          - key: ux_g3_rework_pct
+            label: "What percentage of designs require significant revision? (0-100)"
+            type: text
+            order: 3
+          - key: ux_g4_people
+            label: "Typical number of people involved in a design cycle"
+            type: text
+            order: 4
+          - key: ux_g5_flow
+            label: "How does design work arrive to your team?"
+            type: checklist
+            order: 5
+            options:
+              - "Push (assigned/directed to us)"
+              - "Pull (we pick from a queue/backlog)"
+          - key: ux_g6_steps
+            label: "Detailed per-step timing for your design process"
+            type: table
+            order: 6
+            options:
+              columns: ["Step Name", "Work Time (hours)", "Wait Time (hours)", "Rework %", "People"]
+
+  # ── 04 Data / Analytics ────────────────────────────────────────
+  - name: "Data / Analytics"
+    slug: data-analytics
+    color: "#0891b2"
+    order: 4
+    description: Data engineering, ETL and analytics teams
+    sections:
+      - code: A
+        title: "Team Identity"
+        order: 1
+        questions:
+          - key: da_a1
+            label: "Team name and main responsibility"
+            type: text
+          - key: da_a2
+            label: "Team members and roles"
+            type: textarea
+          - key: da_a3
+            label: "Who consumes your data products?"
+            type: text
+          - key: da_a4
+            label: "Who provides source data or requirements?"
+            type: text
+
+      - code: B
+        title: "Process Steps"
+        order: 2
+        questions:
+          - key: da_b1_pipeline
+            label: "Steps for building a new data pipeline (ETL/ELT)"
+            type: textarea
+          - key: da_b1_table
+            label: "Data Pipeline Metrics"
+            type: table
+            options:
+              columns: ["Step", "Avg Duration", "Wait Time", "% Complete & Accurate", "Who"]
+          - key: da_b2_report
+            label: "Steps for delivering a new report or dashboard"
+            type: textarea
+
+      - code: C
+        title: "Handoffs & Dependencies"
+        order: 3
+        questions:
+          - key: da_c1
+            label: "What data sources do you depend on and who owns them?"
+            type: textarea
+          - key: da_c2
+            label: "How do you deliver data products?"
+            type: textarea
+          - key: da_c3
+            label: "Bottlenecks in the data flow"
+            type: textarea
+
+      - code: D
+        title: "Pain Points & Waste"
+        order: 4
+        questions:
+          - key: da_d1
+            label: "Top 3 sources of waste"
+            type: textarea
+          - key: da_d2
+            label: "Common waste types"
+            type: checklist
+            options:
+              - "Data quality issues"
+              - "Schema changes upstream"
+              - "Waiting for access/permissions"
+              - "Manual data preparation"
+              - "Duplicate pipelines"
+              - "Poor documentation"
+
+      - code: E
+        title: "Tools & Systems"
+        order: 5
+        questions:
+          - key: da_e1
+            label: "Data tools and platforms (Synapse, PostgreSQL, etc.)"
+            type: textarea
+          - key: da_e2
+            label: "Integration issues"
+            type: textarea
+
+      - code: F
+        title: "Improvement Ideas"
+        order: 6
+        questions:
+          - key: da_f1
+            label: "One change to improve the data delivery flow"
+            type: textarea
+          - key: da_f2
+            label: "Quick wins"
+            type: textarea
+
+      - code: G
+        title: "VSM Metrics (for automated map generation)"
+        order: 7
+        questions:
+          - key: da_g1_work_time
+            label: "Average total work time for a data pipeline or report delivery, in hours"
+            type: text
+            order: 1
+          - key: da_g2_wait_time
+            label: "Average wait time before you receive data/requirements to start, in hours"
+            type: text
+            order: 2
+          - key: da_g3_rework_pct
+            label: "What percentage of data deliverables require rework? (0-100)"
+            type: text
+            order: 3
+          - key: da_g4_people
+            label: "Typical number of people involved in a data delivery"
+            type: text
+            order: 4
+          - key: da_g5_flow
+            label: "How does data work arrive to your team?"
+            type: checklist
+            order: 5
+            options:
+              - "Push (assigned/directed to us)"
+              - "Pull (we pick from a queue/backlog)"
+          - key: da_g6_steps
+            label: "Detailed per-step timing for your data delivery process"
+            type: table
+            order: 6
+            options:
+              columns: ["Step Name", "Work Time (hours)", "Wait Time (hours)", "Rework %", "People"]
+
+  # ── 05 Agile / Scrum ───────────────────────────────────────────
+  - name: "Agile / Scrum"
+    slug: agile-scrum
+    color: "#16a34a"
+    order: 5
+    description: Scrum masters, agile coaches, project management
+    sections:
+      - code: A
+        title: "Team Identity"
+        order: 1
+        questions:
+          - key: ag_a1
+            label: "Team/role name and main responsibility"
+            type: text
+          - key: ag_a2
+            label: "Team members and roles"
+            type: textarea
+          - key: ag_a3
+            label: "Who do you coordinate delivery for?"
+            type: text
+          - key: ag_a4
+            label: "Who provides backlog items and priorities?"
+            type: text
+
+      - code: B
+        title: "Process Steps"
+        order: 2
+        questions:
+          - key: ag_b1_sprint
+            label: "Sprint lifecycle: planning through retrospective"
+            type: textarea
+          - key: ag_b1_table
+            label: "Sprint Ceremony Metrics"
+            type: table
+            options:
+              columns: ["Ceremony", "Duration", "Participants", "Effectiveness (1-5)"]
+          - key: ag_b2_refinement
+            label: "Backlog refinement process"
+            type: textarea
+
+      - code: C
+        title: "Handoffs & Dependencies"
+        order: 3
+        questions:
+          - key: ag_c1
+            label: "How do priorities flow from management to teams?"
+            type: textarea
+          - key: ag_c2
+            label: "How do you track cross-team dependencies?"
+            type: textarea
+          - key: ag_c3
+            label: "Bottlenecks in the agile process"
+            type: textarea
+
+      - code: D
+        title: "Pain Points & Waste"
+        order: 4
+        questions:
+          - key: ag_d1
+            label: "Top 3 process wastes"
+            type: textarea
+          - key: ag_d2
+            label: "Common waste types"
+            type: checklist
+            options:
+              - "Scope creep mid-sprint"
+              - "Unclear acceptance criteria"
+              - "Excessive meetings"
+              - "Incomplete sprint planning"
+              - "Unresolved dependencies"
+              - "Lack of team autonomy"
+
+      - code: E
+        title: "Tools & Systems"
+        order: 5
+        questions:
+          - key: ag_e1
+            label: "Agile tools (Azure DevOps Boards, Jira, etc.)"
+            type: textarea
+          - key: ag_e2
+            label: "Tool integration issues"
+            type: textarea
+
+      - code: F
+        title: "Improvement Ideas"
+        order: 6
+        questions:
+          - key: ag_f1
+            label: "One change to improve agile flow"
+            type: textarea
+          - key: ag_f2
+            label: "Quick wins"
+            type: textarea
+
+      - code: G
+        title: "VSM Metrics (for automated map generation)"
+        order: 7
+        questions:
+          - key: ag_g1_work_time
+            label: "Average total time spent on sprint ceremonies and coordination per sprint, in hours"
+            type: text
+            order: 1
+          - key: ag_g2_wait_time
+            label: "Average wait/idle time in the agile process (blocked stories, dependencies), in hours"
+            type: text
+            order: 2
+          - key: ag_g3_rework_pct
+            label: "What percentage of sprint items require re-planning or carry-over? (0-100)"
+            type: text
+            order: 3
+          - key: ag_g4_people
+            label: "Typical number of people involved in agile ceremonies"
+            type: text
+            order: 4
+          - key: ag_g5_flow
+            label: "How does work flow in your agile process?"
+            type: checklist
+            order: 5
+            options:
+              - "Push (assigned/directed to teams)"
+              - "Pull (teams pick from backlog)"
+          - key: ag_g6_steps
+            label: "Detailed timing for sprint lifecycle steps"
+            type: table
+            order: 6
+            options:
+              columns: ["Step Name", "Work Time (hours)", "Wait Time (hours)", "Rework %", "People"]
+
+  # ── 06 Management ──────────────────────────────────────────────
+  - name: Management
+    slug: management
+    color: "#dc2626"
+    order: 6
+    description: Product owners, programme management, stakeholders
+    sections:
+      - code: A
+        title: "Team Identity"
+        order: 1
+        questions:
+          - key: mg_a1
+            label: "Your name and management scope"
+            type: text
+          - key: mg_a2
+            label: "Teams you manage or coordinate"
+            type: textarea
+          - key: mg_a3
+            label: "Who is the end-client for ATHINA deliverables?"
+            type: text
+          - key: mg_a4
+            label: "Key stakeholders and their expectations"
+            type: textarea
+
+      - code: B
+        title: "Process Steps"
+        order: 2
+        questions:
+          - key: mg_b1_request
+            label: "How does a new feature request flow from client to delivery?"
+            type: textarea
+          - key: mg_b1_table
+            label: "Request-to-Delivery Metrics"
+            type: table
+            options:
+              columns: ["Step", "Avg Duration", "Wait Time", "Decision Maker"]
+          - key: mg_b2_release
+            label: "Release approval and communication process"
+            type: textarea
+
+      - code: C
+        title: "Handoffs & Dependencies"
+        order: 3
+        questions:
+          - key: mg_c1
+            label: "How do you hand off priorities to the agile/scrum team?"
+            type: textarea
+          - key: mg_c2
+            label: "How do you receive delivery status from teams?"
+            type: textarea
+          - key: mg_c3
+            label: "Bottlenecks from a management perspective"
+            type: textarea
+
+      - code: D
+        title: "Pain Points & Waste"
+        order: 4
+        questions:
+          - key: mg_d1
+            label: "Top 3 process wastes"
+            type: textarea
+          - key: mg_d2
+            label: "Common waste types"
+            type: checklist
+            options:
+              - "Delayed decisions"
+              - "Unclear requirements from client"
+              - "Reporting overhead"
+              - "Misaligned priorities"
+              - "Lack of visibility"
+              - "Approval bottlenecks"
+
+      - code: E
+        title: "Tools & Systems"
+        order: 5
+        questions:
+          - key: mg_e1
+            label: "Management and reporting tools"
+            type: textarea
+          - key: mg_e2
+            label: "Information flow issues"
+            type: textarea
+
+      - code: F
+        title: "Improvement Ideas"
+        order: 6
+        questions:
+          - key: mg_f1
+            label: "One change to improve end-to-end delivery"
+            type: textarea
+          - key: mg_f2
+            label: "Quick wins"
+            type: textarea
+
+      - code: G
+        title: "VSM Metrics (for automated map generation)"
+        order: 7
+        questions:
+          - key: mg_g1_work_time
+            label: "Average time spent on a feature request from intake to approval, in hours"
+            type: text
+            order: 1
+          - key: mg_g2_wait_time
+            label: "Average wait time for decisions, approvals, or stakeholder input, in hours"
+            type: text
+            order: 2
+          - key: mg_g3_rework_pct
+            label: "What percentage of requirements need significant clarification/rework? (0-100)"
+            type: text
+            order: 3
+          - key: mg_g4_people
+            label: "Typical number of people involved in management decisions"
+            type: text
+            order: 4
+          - key: mg_g5_flow
+            label: "How do requests flow through management?"
+            type: checklist
+            order: 5
+            options:
+              - "Push (top-down directives)"
+              - "Pull (team-driven requests)"
+          - key: mg_g6_steps
+            label: "Detailed timing for management process steps"
+            type: table
+            order: 6
+            options:
+              columns: ["Step Name", "Work Time (hours)", "Wait Time (hours)", "Rework %", "People"]
+
+  # ── 07 DevOps / Platform ───────────────────────────────────────
+  - name: "DevOps / Platform"
+    slug: devops-platform
+    color: "#4f46e5"
+    order: 7
+    description: DevOps, SRE, platform engineering
+    sections:
+      - code: A
+        title: "Team Identity"
+        order: 1
+        questions:
+          - key: do_a1
+            label: "Team name and main responsibility"
+            type: text
+          - key: do_a2
+            label: "Team members and roles"
+            type: textarea
+          - key: do_a3
+            label: "Who are the internal consumers of your platform services?"
+            type: text
+          - key: do_a4
+            label: "Who provides infrastructure requirements?"
+            type: text
+
+      - code: B
+        title: "Process Steps"
+        order: 2
+        questions:
+          - key: do_b1_cicd
+            label: "CI/CD Pipeline: steps from commit to production"
+            type: textarea
+          - key: do_b1_table
+            label: "CI/CD Pipeline Metrics"
+            type: table
+            options:
+              columns: ["Step", "Avg Duration", "Wait Time", "% Complete & Accurate", "Who"]
+          - key: do_b2_infra
+            label: "Infrastructure change process (Terraform apply, etc.)"
+            type: textarea
+          - key: do_b2_table
+            label: "Infrastructure Change Metrics"
+            type: table
+            options:
+              columns: ["Step", "Avg Duration", "Wait Time", "Approval", "Who"]
+          - key: do_b3_incident
+            label: "Incident response process"
+            type: textarea
+          - key: do_b4_promotion
+            label: "Environment promotion process (dev→test→uat→prod)"
+            type: textarea
+          - key: do_b5_security
+            label: "Security & compliance scanning pipeline"
+            type: textarea
+
+      - code: C
+        title: "Handoffs & Dependencies"
+        order: 3
+        questions:
+          - key: do_c1
+            label: "What do development teams hand off to you (Docker images, configs)?"
+            type: textarea
+          - key: do_c2
+            label: "What do you deliver to other teams (infra, pipelines, environments)?"
+            type: textarea
+          - key: do_c3
+            label: "Bottlenecks in the DevOps process"
+            type: textarea
+          - key: do_c4
+            label: "Cross-environment dependency issues"
+            type: textarea
+
+      - code: D
+        title: "Pain Points & Waste"
+        order: 4
+        questions:
+          - key: do_d1
+            label: "Top 3 sources of waste or rework"
+            type: textarea
+          - key: do_d2
+            label: "Common waste types"
+            type: checklist
+            options:
+              - "Flaky pipelines"
+              - "Environment drift"
+              - "Manual interventions"
+              - "Secret rotation overhead"
+              - "Waiting for approvals"
+              - "Configuration inconsistencies"
+              - "Undocumented tribal knowledge"
+
+      - code: E
+        title: "Tools & Systems"
+        order: 5
+        questions:
+          - key: do_e1
+            label: "DevOps toolchain (Azure DevOps, Terraform, Docker, AKS, etc.)"
+            type: textarea
+          - key: do_e2
+            label: "Monitoring and observability stack"
+            type: textarea
+          - key: do_e3
+            label: "Tool integration pain points"
+            type: textarea
+
+      - code: F
+        title: "Improvement Ideas"
+        order: 6
+        questions:
+          - key: do_f1
+            label: "One change to improve delivery throughput"
+            type: textarea
+          - key: do_f2
+            label: "Quick wins"
+            type: textarea
+
+      - code: G
+        title: "VSM Metrics (for automated map generation)"
+        order: 7
+        questions:
+          - key: do_g1_work_time
+            label: "Average total work time for a CI/CD pipeline run or infrastructure change, in hours"
+            type: text
+            order: 1
+          - key: do_g2_wait_time
+            label: "Average wait time for approvals, environment provisioning, or queue time, in hours"
+            type: text
+            order: 2
+          - key: do_g3_rework_pct
+            label: "What percentage of deployments require rollback or hotfix? (0-100)"
+            type: text
+            order: 3
+          - key: do_g4_people
+            label: "Typical number of people involved in a deployment"
+            type: text
+            order: 4
+          - key: do_g5_flow
+            label: "How does deployment work arrive to your team?"
+            type: checklist
+            order: 5
+            options:
+              - "Push (triggered automatically by CI/CD)"
+              - "Pull (manual trigger/request)"
+          - key: do_g6_steps
+            label: "Detailed per-step timing for your CI/CD and deployment process"
+            type: table
+            order: 6
+            options:
+              columns: ["Step Name", "Work Time (hours)", "Wait Time (hours)", "Rework %", "People"]

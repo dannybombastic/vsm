@@ -1,0 +1,53 @@
+{% extends "vsm/base.html" %}
+{% load i18n %}
+
+{% block title %}{% trans "Projects" %} – VSM{% endblock %}
+
+{% block extra_head %}
+<style>
+  .project-card { transition: transform .15s; cursor: pointer; }
+  .project-card:hover { transform: translateY(-4px); box-shadow: 0 .5rem 1rem rgba(0,0,0,.15); }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+  <div class="col-12">
+    <nav aria-label="breadcrumb">
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{% url 'vsm:index' %}">Home</a></li>
+        <li class="breadcrumb-item active">{% trans "Projects" %}</li>
+      </ol>
+    </nav>
+    <h2>🏗️ {% trans "Projects" %}</h2>
+    <p class="text-muted">{% trans "Select a project to view its value stream maps and associated questionnaires." %}</p>
+  </div>
+</div>
+
+{% if projects %}
+<div class="row g-3">
+  {% for p in projects %}
+  <div class="col-12 col-sm-6 col-lg-4">
+    <a href="{% url 'vsm:project_detail' slug=p.slug %}" class="text-decoration-none">
+      <div class="card project-card h-100" style="border-left: 4px solid {{ p.color }};">
+        <div class="card-body">
+          <h5 class="card-title text-dark">{{ p.name }}</h5>
+          {% if p.description %}
+          <p class="card-text text-muted small">{{ p.description|truncatewords:25 }}</p>
+          {% endif %}
+          <div class="d-flex gap-2 mt-2">
+            <span class="badge" style="background-color: {{ p.color }};">{{ p.vsm_count }} VSM map{{ p.vsm_count|pluralize }}</span>
+            <span class="badge bg-secondary">{{ p.response_count }} {% trans "response" %}{{ p.response_count|pluralize }}</span>
+          </div>
+        </div>
+      </div>
+    </a>
+  </div>
+  {% endfor %}
+</div>
+{% else %}
+<div class="alert alert-info">
+  {% trans "No projects created yet." %} <a href="/admin/vsm/project/add/">{% trans "Use the admin panel to create one." %}</a>
+</div>
+{% endif %}
+{% endblock %}

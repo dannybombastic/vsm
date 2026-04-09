@@ -1,0 +1,32 @@
+services:
+  db:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-vsm_db}
+      POSTGRES_USER: ${POSTGRES_USER:-vsm_user}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-vsm_secret_2024}
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-vsm_user} -d ${POSTGRES_DB:-vsm_db}"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+
+  web:
+    build: .
+    restart: unless-stopped
+    command: >
+      sh -c "./entrypoint.sh &&
+             gunicorn vsm_project.wsgi:application --bind 0.0.0.0:8001 --workers 3 --timeout 120"
+    ports:
+      - "8001:8001"
+    env_file:
+      - .env
+    depends_on:
+      db:
+        condition: service_healthy
+
+volumes:
+  pgdata:

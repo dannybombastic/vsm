@@ -1,0 +1,206 @@
+{% extends "vsm/base.html" %}
+{% load i18n %}
+
+{% block title %}{{ category.name }} – {% trans "VSM Questionnaire" %}{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+  <div class="col-12">
+    <nav aria-label="breadcrumb">
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{% url 'vsm:index' %}">{% trans "Home" %}</a></li>
+        {% if project %}
+        <li class="breadcrumb-item"><a href="{% url 'vsm:project_list' %}">{% trans "Projects" %}</a></li>
+        <li class="breadcrumb-item"><a href="{% url 'vsm:project_detail' slug=project.slug %}">{{ project.name }}</a></li>
+        {% if editing %}
+        <li class="breadcrumb-item"><a href="{% url 'vsm:response_list' project_slug=project.slug slug=category.slug %}">{{ category.name }}</a></li>
+        <li class="breadcrumb-item active">{% trans "Edit Response" %}</li>
+        {% else %}
+        <li class="breadcrumb-item active">{{ category.name }}</li>
+        {% endif %}
+        {% else %}
+        <li class="breadcrumb-item active">{{ category.name }}</li>
+        {% endif %}
+      </ol>
+    </nav>
+    {% if editing %}
+    <h2 style="color: {{ category.color }};">✏️ {% trans "Edit Response" %} – {{ category.name }}</h2>
+    {% else %}
+    <h2 style="color: {{ category.color }};">{{ category.name }}</h2>
+    {% endif %}
+    {% if project %}
+    <span class="badge mb-2" style="background-color: {{ project.color }};">{% trans "Project" %}: {{ project.name }}</span>
+    {% endif %}
+    <p class="text-muted">{{ category.description }}</p>
+  </div>
+</div>
+
+<form method="post" id="vsm-form">
+  {% csrf_token %}
+
+  <!-- Respondent info -->
+  <div class="card mb-4">
+    <div class="card-header bg-dark text-white">{% trans "Respondent Information" %}</div>
+    <div class="card-body">
+      <div class="row g-3">
+        <div class="col-md-6">
+          <label class="form-label">{% trans "Name" %} *</label>
+          {{ form.respondent_name }}
+          {% if form.respondent_name.errors %}
+            <div class="text-danger small">{{ form.respondent_name.errors }}</div>
+          {% endif %}
+        </div>
+        <div class="col-md-6">
+          <label class="form-label">{% trans "Role" %}</label>
+          {{ form.respondent_role }}
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Sections -->
+  {% for sec in sections %}
+  <div class="card mb-4">
+    <div class="card-header" style="background-color: {{ category.color }}; color: #fff;">
+      {% trans "Section" %} {{ sec.code }}: {{ sec.title }}
+    </div>
+    <div class="card-body">
+      {% for q in sec.questions %}
+      <div class="mb-3">
+        {% if q.type == "table" %}
+          <label class="form-label fw-bold">{{ q.label }}</label>
+          <div class="table-responsive">
+            <table class="table table-bordered table-sm" data-key="{{ q.key }}">
+              <thead class="table-light">
+                <tr>
+                  {% for col in q.options.columns %}
+                  <th>{{ col }}</th>
+                  {% endfor %}
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  {% for col in q.options.columns %}
+                  <td contenteditable="true" class="editable-cell"></td>
+                  {% endfor %}
+                </tr>
+              </tbody>
+              <tfoot>
+                <tr>
+                  <td colspan="{{ q.options.columns|length }}">
+                    <button type="button" class="btn btn-sm btn-outline-secondary add-row-btn"
+                            data-key="{{ q.key }}">+ {% trans "Add row" %}</button>
+                  </td>
+                </tr>
+              </tfoot>
+            </table>
+          </div>
+          {{ q.field }}
+        {% elif q.type == "checklist" %}
+          <label class="form-label fw-bold">{{ q.label }}</label>
+          <div>{{ q.field }}</div>
+        {% else %}
+          <label class="form-label fw-bold" for="id_{{ q.key }}">{{ q.label }}</label>
+          {{ q.field }}
+        {% endif %}
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+  {% endfor %}
+
+  <div class="d-flex gap-2 mb-4">
+    {% if editing %}
+    <button type="submit" class="btn btn-success btn-lg">✏️ {% trans "Update Response" %}</button>
+    <a href="{% url 'vsm:response_list' project_slug=project.slug slug=category.slug %}" class="btn btn-outline-secondary btn-lg">{% trans "Cancel" %}</a>
+    {% else %}
+    <button type="submit" class="btn btn-primary btn-lg">{% trans "Submit Questionnaire" %}</button>
+    {% if project %}
+    <a href="{% url 'vsm:project_detail' slug=project.slug %}" class="btn btn-outline-secondary btn-lg">{% trans "Cancel" %}</a>
+    {% else %}
+    <a href="{% url 'vsm:index' %}" class="btn btn-outline-secondary btn-lg">{% trans "Cancel" %}</a>
+    {% endif %}
+    {% endif %}
+  </div>
+</form>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  // Pre-populate editable tables from hidden JSON fields (edit mode)
+  document.querySelectorAll('table[data-key]').forEach(function (table) {
+    const key = table.dataset.key;
+    const hidden = document.getElementById('id_' + key);
+    if (hidden && hidden.value) {
+      try {
+        const rows = JSON.parse(hidden.value);
+        if (Array.isArray(rows) && rows.length > 0) {
+          const tbody = table.querySelector('tbody');
+          const headers = [];
+          table.querySelectorAll('thead th').forEach(function (th) {
+            headers.push(th.textContent.trim());
+          });
+          tbody.innerHTML = '';  // Clear the default empty row
+          rows.forEach(function (rowData) {
+            const tr = document.createElement('tr');
+            headers.forEach(function (col) {
+              const td = document.createElement('td');
+              td.contentEditable = 'true';
+              td.classList.add('editable-cell');
+              td.textContent = rowData[col] || '';
+              tr.appendChild(td);
+            });
+            tbody.appendChild(tr);
+          });
+        }
+      } catch (e) { /* not valid JSON, leave default empty row */ }
+    }
+  });
+
+  // Add row to editable tables
+  document.querySelectorAll('.add-row-btn').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      const key = this.dataset.key;
+      const table = document.querySelector('table[data-key="' + key + '"]');
+      const tbody = table.querySelector('tbody');
+      const cols = table.querySelectorAll('thead th').length;
+      const row = document.createElement('tr');
+      for (let i = 0; i < cols; i++) {
+        const td = document.createElement('td');
+        td.contentEditable = 'true';
+        td.classList.add('editable-cell');
+        row.appendChild(td);
+      }
+      tbody.appendChild(row);
+    });
+  });
+
+  // Serialize tables into hidden JSON fields before submit
+  document.getElementById('vsm-form').addEventListener('submit', function () {
+    document.querySelectorAll('table[data-key]').forEach(function (table) {
+      const key = table.dataset.key;
+      const headers = [];
+      table.querySelectorAll('thead th').forEach(function (th) {
+        headers.push(th.textContent.trim());
+      });
+      const rows = [];
+      table.querySelectorAll('tbody tr').forEach(function (tr) {
+        const row = {};
+        tr.querySelectorAll('td').forEach(function (td, idx) {
+          row[headers[idx]] = td.textContent.trim();
+        });
+        // Only include rows that have some content
+        if (Object.values(row).some(function (v) { return v !== ''; })) {
+          rows.push(row);
+        }
+      });
+      const hidden = document.getElementById('id_' + key);
+      if (hidden) {
+        hidden.value = JSON.stringify(rows);
+      }
+    });
+  });
+});
+</script>
+{% endblock %}

@@ -1,0 +1,317 @@
+{% extends "vsm/base.html" %}
+
+{% block title %}{{ diagram.name }} – Diagrama{% endblock %}
+
+{% block extra_head %}
+<style>
+  #diagram-container {
+    position: relative;
+    border: 1px solid #dee2e6;
+    border-radius: .5rem;
+    overflow: hidden;
+    background: #fafafa;
+    min-height: 400px;
+  }
+  #diagram-wrapper {
+    transform-origin: 0 0;
+    cursor: default;
+    padding: 2rem;
+    display: inline-block;
+    min-width: 100%;
+  }
+  #diagram-wrapper:active { cursor: grabbing; }
+  #diagram-wrapper .mermaid { display: flex; justify-content: center; }
+  .zoom-controls {
+    position: absolute;
+    top: .75rem;
+    right: .75rem;
+    z-index: 10;
+    display: flex;
+    flex-direction: column;
+    gap: .25rem;
+  }
+  .zoom-controls button {
+    width: 36px;
+    height: 36px;
+    border: 1px solid #dee2e6;
+    background: #fff;
+    border-radius: .375rem;
+    font-size: 1.1rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 1px 3px rgba(0,0,0,.1);
+  }
+  .zoom-controls button:hover { background: #f0f0f0; }
+  .zoom-badge {
+    text-align: center;
+    font-size: .7rem;
+    color: #6c757d;
+    padding: 2px 0;
+  }
+  #code-panel {
+    font-family: 'Courier New', monospace;
+    font-size: .85rem;
+    resize: vertical;
+    min-height: 200px;
+  }
+  .diagram-tab-link.active {
+    font-weight: 600;
+    border-bottom: 2px solid #0d6efd;
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="row mb-3">
+  <div class="col-12">
+    <nav aria-label="breadcrumb">
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{% url 'vsm:index' %}">Home</a></li>
+        {% if diagram.project %}
+        <li class="breadcrumb-item"><a href="{% url 'vsm:project_detail' slug=diagram.project.slug %}">{{ diagram.project.name }}</a></li>
+        {% endif %}
+        <li class="breadcrumb-item active">{{ diagram.name }}</li>
+      </ol>
+    </nav>
+    <div class="d-flex align-items-center gap-3 mb-2">
+      <h2 class="mb-0">{{ diagram.name }}</h2>
+      {% if diagram.project %}
+      <span class="badge" style="background:{{ diagram.project.color }};">{{ diagram.project.name }}</span>
+      {% else %}
+      <span class="badge bg-secondary">Global</span>
+      {% endif %}
+    </div>
+    {% if diagram.description %}
+    <p class="text-muted">{{ diagram.description }}</p>
+    {% endif %}
+  </div>
+</div>
+
+<!-- Sibling diagrams nav -->
+{% if siblings %}
+<div class="row mb-3">
+  <div class="col-12">
+    <div class="d-flex gap-2 flex-wrap">
+      <span class="text-muted small align-self-center">Otros diagramas:</span>
+      {% for s in siblings %}
+      <a href="{% url 'vsm:diagram_view' slug=s.slug %}" class="btn btn-outline-secondary btn-sm">{{ s.name }}</a>
+      {% endfor %}
+    </div>
+  </div>
+</div>
+{% endif %}
+
+<!-- Interactive diagram viewer -->
+<div class="row mb-4">
+  <div class="col-12">
+    <div class="card shadow-sm">
+      <div class="card-header d-flex justify-content-between align-items-center">
+        <div>
+          <button class="btn btn-sm btn-outline-primary me-2" id="btn-toggle-code">
+            &lt;/&gt; Ver / Editar código
+          </button>
+          <button class="btn btn-sm btn-outline-success" id="btn-fullscreen" title="Pantalla completa">
+            ⛶ Pantalla completa
+          </button>
+        </div>
+        <small class="text-muted">Actualizado: {{ diagram.updated_at|date:"d M Y H:i" }}</small>
+      </div>
+      <div class="card-body p-0">
+        <div id="diagram-container">
+          <div class="zoom-controls">
+            <button id="btn-zoom-toggle" title="Activar/desactivar zoom" style="font-size:.7rem; width:auto; padding:0 6px;">🔍 Zoom</button>
+            <button id="btn-zoom-in" title="Zoom In" disabled>+</button>
+            <div class="zoom-badge" id="zoom-level">100%</div>
+            <button id="btn-zoom-out" title="Zoom Out" disabled>−</button>
+            <button id="btn-zoom-reset" title="Reset" style="font-size:.8rem;" disabled>↺</button>
+            <button id="btn-zoom-fit" title="Ajustar" style="font-size:.75rem;" disabled>⊡</button>
+          </div>
+          <div id="diagram-wrapper">
+            <pre class="mermaid" id="mermaid-source">{{ diagram.mermaid_code }}</pre>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Code editor panel (hidden by default) -->
+<div class="row mb-4" id="code-editor-row" style="display:none;">
+  <div class="col-12">
+    <div class="card shadow-sm border-primary">
+      <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+        <span>&lt;/&gt; Código Mermaid</span>
+        <div>
+          <button class="btn btn-sm btn-light" id="btn-render">▶ Renderizar</button>
+          <button class="btn btn-sm btn-outline-light" id="btn-copy-code">📋 Copiar</button>
+        </div>
+      </div>
+      <div class="card-body p-0">
+        <textarea id="code-panel" class="form-control border-0 rounded-0">{{ diagram.mermaid_code }}</textarea>
+      </div>
+      <div class="card-footer small text-muted">
+        ℹ️ Los cambios aquí son locales (vista previa). Para guardar permanentemente, edita en <a href="/admin/vsm/diagram/{{ diagram.pk }}/change/" target="_blank">Admin</a>.
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Admin link -->
+<div class="row mb-4">
+  <div class="col-12 text-end">
+    <a href="/admin/vsm/diagram/{{ diagram.pk }}/change/" class="btn btn-outline-secondary btn-sm" target="_blank">
+      ✏️ Editar en Admin
+    </a>
+    <a href="/admin/vsm/diagram/add/" class="btn btn-outline-primary btn-sm" target="_blank">
+      ＋ Nuevo diagrama
+    </a>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script type="module">
+  import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs';
+  mermaid.initialize({
+    startOnLoad: true,
+    theme: 'base',
+    securityLevel: 'loose',
+    themeVariables: { fontSize: '14px' },
+  });
+
+  // ── Zoom / Pan ──────────────────────────────────────────────
+  const container = document.getElementById('diagram-container');
+  const wrapper   = document.getElementById('diagram-wrapper');
+  const zoomLabel = document.getElementById('zoom-level');
+
+  let scale = 1, panX = 0, panY = 0, dragging = false, startX, startY;
+  let zoomActive = false;
+  const STEP = 0.15, MIN = 0.2, MAX = 4;
+  const btnToggle = document.getElementById('btn-zoom-toggle');
+  const btnIn = document.getElementById('btn-zoom-in');
+  const btnOut = document.getElementById('btn-zoom-out');
+  const btnReset = document.getElementById('btn-zoom-reset');
+  const btnFit = document.getElementById('btn-zoom-fit');
+
+  function applyTransform() {
+    wrapper.style.transform = `translate(${panX}px, ${panY}px) scale(${scale})`;
+    zoomLabel.textContent = Math.round(scale * 100) + '%';
+  }
+
+  function toggleZoom() {
+    zoomActive = !zoomActive;
+    btnToggle.style.background = zoomActive ? '#0d6efd' : '#fff';
+    btnToggle.style.color = zoomActive ? '#fff' : '#333';
+    btnIn.disabled = !zoomActive;
+    btnOut.disabled = !zoomActive;
+    btnReset.disabled = !zoomActive;
+    btnFit.disabled = !zoomActive;
+    wrapper.style.cursor = zoomActive ? 'grab' : 'default';
+  }
+
+  btnToggle.onclick = toggleZoom;
+  wrapper.style.cursor = 'default';
+
+  btnIn.onclick  = () => { scale = Math.min(MAX, scale + STEP); applyTransform(); };
+  btnOut.onclick = () => { scale = Math.max(MIN, scale - STEP); applyTransform(); };
+  btnReset.onclick = () => { scale = 1; panX = 0; panY = 0; applyTransform(); };
+  btnFit.onclick = () => {
+    const svg = wrapper.querySelector('svg');
+    if (!svg) return;
+    const cw = container.clientWidth, ch = container.clientHeight;
+    const sw = svg.getBoundingClientRect().width / scale;
+    const sh = svg.getBoundingClientRect().height / scale;
+    scale = Math.min(cw / sw, ch / sh, MAX) * 0.9;
+    panX = 0; panY = 0;
+    applyTransform();
+  };
+
+  // Mouse wheel zoom (only when active)
+  container.addEventListener('wheel', (e) => {
+    if (!zoomActive) return;
+    e.preventDefault();
+    const delta = e.deltaY > 0 ? -STEP : STEP;
+    scale = Math.min(MAX, Math.max(MIN, scale + delta));
+    applyTransform();
+  }, { passive: false });
+
+  // Pan with mouse drag (only when active)
+  container.addEventListener('mousedown', (e) => {
+    if (!zoomActive) return;
+    dragging = true; startX = e.clientX - panX; startY = e.clientY - panY;
+  });
+  window.addEventListener('mousemove', (e) => {
+    if (!dragging) return;
+    panX = e.clientX - startX; panY = e.clientY - startY;
+    applyTransform();
+  });
+  window.addEventListener('mouseup', () => { dragging = false; });
+
+  // Touch support (only when active)
+  let lastTouchDist = null;
+  container.addEventListener('touchstart', (e) => {
+    if (!zoomActive) return;
+    if (e.touches.length === 1) {
+      dragging = true; startX = e.touches[0].clientX - panX; startY = e.touches[0].clientY - panY;
+    }
+    if (e.touches.length === 2) {
+      lastTouchDist = Math.hypot(e.touches[0].clientX - e.touches[1].clientX, e.touches[0].clientY - e.touches[1].clientY);
+    }
+  });
+  container.addEventListener('touchmove', (e) => {
+    if (!zoomActive) return;
+    if (e.touches.length === 1 && dragging) {
+      e.preventDefault();
+      panX = e.touches[0].clientX - startX; panY = e.touches[0].clientY - startY;
+      applyTransform();
+    }
+    if (e.touches.length === 2 && lastTouchDist) {
+      e.preventDefault();
+      const dist = Math.hypot(e.touches[0].clientX - e.touches[1].clientX, e.touches[0].clientY - e.touches[1].clientY);
+      scale = Math.min(MAX, Math.max(MIN, scale * (dist / lastTouchDist)));
+      lastTouchDist = dist;
+      applyTransform();
+    }
+  }, { passive: false });
+  container.addEventListener('touchend', () => { dragging = false; lastTouchDist = null; });
+
+  // ── Code editor toggle ──────────────────────────────────────
+  const codeRow = document.getElementById('code-editor-row');
+  document.getElementById('btn-toggle-code').onclick = () => {
+    codeRow.style.display = codeRow.style.display === 'none' ? '' : 'none';
+  };
+
+  // ── Re-render from code editor ──────────────────────────────
+  document.getElementById('btn-render').onclick = async () => {
+    const code = document.getElementById('code-panel').value.trim();
+    if (!code) return;
+    // Remove old SVG and put fresh pre
+    wrapper.innerHTML = '';
+    const pre = document.createElement('pre');
+    pre.className = 'mermaid';
+    pre.textContent = code;
+    wrapper.appendChild(pre);
+    // Re-initialize mermaid
+    await mermaid.run({ nodes: [pre] });
+    scale = 1; panX = 0; panY = 0; applyTransform();
+  };
+
+  // ── Copy code ───────────────────────────────────────────────
+  document.getElementById('btn-copy-code').onclick = () => {
+    const code = document.getElementById('code-panel').value;
+    navigator.clipboard.writeText(code).then(() => {
+      const btn = document.getElementById('btn-copy-code');
+      btn.textContent = '✅ Copiado!';
+      setTimeout(() => { btn.textContent = '📋 Copiar'; }, 1500);
+    });
+  };
+
+  // ── Fullscreen ──────────────────────────────────────────────
+  document.getElementById('btn-fullscreen').onclick = () => {
+    if (container.requestFullscreen) container.requestFullscreen();
+    else if (container.webkitRequestFullscreen) container.webkitRequestFullscreen();
+  };
+</script>
+{% endblock %}

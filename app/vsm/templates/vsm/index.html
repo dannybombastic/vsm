@@ -1,0 +1,449 @@
+{% extends "vsm/base.html" %}
+{% load i18n %}
+
+{% block title %}ATHINA – Value Stream Map{% endblock %}
+
+{% block extra_head %}
+<style>
+  .nav-card {
+    transition: transform .15s;
+    cursor: pointer;
+  }
+  .nav-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 .5rem 1rem rgba(0,0,0,.15);
+  }
+  #diagram-container {
+    position: relative;
+    border: 1px solid #dee2e6;
+    border-radius: .5rem;
+    overflow: hidden;
+    background: #fafafa;
+    min-height: 200px;
+  }
+  #diagram-wrapper {
+    transform-origin: 0 0;
+    cursor: default;
+    padding: 1.5rem;
+    display: inline-block;
+    min-width: 100%;
+  }
+  #diagram-wrapper:active { cursor: grabbing; }
+  #diagram-wrapper .mermaid { display: flex; justify-content: center; }
+  .zoom-controls {
+    position: absolute;
+    top: .75rem;
+    right: .75rem;
+    z-index: 10;
+    display: flex;
+    flex-direction: column;
+    gap: .25rem;
+  }
+  .zoom-controls button {
+    width: 32px;
+    height: 32px;
+    border: 1px solid #dee2e6;
+    background: #fff;
+    border-radius: .375rem;
+    font-size: 1rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 1px 3px rgba(0,0,0,.1);
+  }
+  .zoom-controls button:hover { background: #f0f0f0; }
+  .zoom-badge {
+    text-align: center;
+    font-size: .65rem;
+    color: #6c757d;
+    padding: 1px 0;
+  }
+  .step-number {
+    width: 2.2rem;
+    height: 2.2rem;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    font-size: 1rem;
+    color: #fff;
+    flex-shrink: 0;
+  }
+  /* Diagram: show LR on desktop, TD on mobile */
+  .mermaid-desktop { display: block; }
+  .mermaid-mobile  { display: none; }
+  @media (max-width: 767.98px) {
+    .mermaid-desktop { display: none; }
+    .mermaid-mobile  { display: block; }
+    #diagram-wrapper { padding: 1rem .5rem; }
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<div class="row mb-4" id="hero-section" data-intro="{% trans 'Welcome to ATHINA VSM! This tool helps you generate Value Stream Maps from team questionnaires.' %}" data-step="1">
+  <div class="col-12 d-flex flex-wrap align-items-center justify-content-between gap-2">
+    <div>
+      <h2>🏭 ATHINA – Value Stream Mapping</h2>
+      <p class="text-muted mb-0">
+        {% trans "Tool for analysis and generation of Value Stream Maps from team questionnaires." %}
+      </p>
+    </div>
+    <button class="btn btn-outline-info btn-sm" id="btn-tutorial" title="{% trans 'Start tutorial' %}">
+      ❓ {% trans "Tutorial" %}
+    </button>
+  </div>
+</div>
+
+<!-- App Usage Flow Diagram -->
+<div class="row mb-4 mb-md-5" id="flow-diagram" data-intro="{% trans 'This diagram shows the step-by-step flow of the application.' %}" data-step="2">
+  <div class="col-12">
+    <div class="card">
+      <div class="card-header d-flex justify-content-between align-items-center">
+        <strong>📋 {% trans "How to use this app?" %}</strong>
+      </div>
+      <div class="card-body p-0">
+        <div id="diagram-container">
+          <div class="zoom-controls d-none d-md-flex">
+            <button id="btn-zoom-toggle" title="{% trans 'Toggle zoom' %}" style="font-size:.7rem; width:auto; padding:0 6px;">🔍 Zoom</button>
+            <button id="btn-zoom-in" title="Zoom In" disabled>+</button>
+            <div class="zoom-badge" id="zoom-level">100%</div>
+            <button id="btn-zoom-out" title="Zoom Out" disabled>−</button>
+            <button id="btn-zoom-reset" title="Reset" style="font-size:.75rem;" disabled>↺</button>
+          </div>
+          <div id="diagram-wrapper">
+            <pre class="mermaid mermaid-desktop">
+flowchart LR
+  subgraph MAIN["📋 {% trans 'Questionnaire Flow (AI)' %}"]
+    direction LR
+    A["🏗️ 1. {% trans 'Create Project' %}"] --> B["📝 2. {% trans 'Fill Questionnaires' %}"]
+    B --> C["📊 3. {% trans 'Review Responses' %}"]
+    C --> D{"🤖 4. {% trans 'Generate VSM' %}\n{% trans 'with AI' %}"}
+    D --> E["💾 5. {% trans 'Save VSM' %}"]
+  end
+
+  subgraph ADMIN["⚙️ {% trans 'Admin Flow (Manual)' %}"]
+    direction LR
+    H["🏢 {% trans 'Create Departments' %}"] --> I["📄 {% trans 'Create Forms' %}\n{% trans 'per Department' %}"]
+    I --> J["🏗️ {% trans 'Create Projects' %}\n{% trans 'from Admin' %}"]
+    J --> K["✏️ {% trans 'Create VSM' %}\n{% trans 'Manually' %}"]
+    K --> E
+  end
+
+  E --> F["🗺️ 6. {% trans 'Visualize' %}\n{% trans 'Value Stream Map' %}"]
+  F --> G["🔄 7. {% trans 'Iterate and' %}\n{% trans 'Improve' %}"]
+  G --> B
+  G --> K
+
+  style A fill:#0d6efd,color:#fff,stroke:#0a58ca
+  style B fill:#6f42c1,color:#fff,stroke:#59359a
+  style C fill:#198754,color:#fff,stroke:#146c43
+  style D fill:#fd7e14,color:#fff,stroke:#dc6a12
+  style E fill:#dc3545,color:#fff,stroke:#b02a37
+  style F fill:#0dcaf0,color:#000,stroke:#0aa2c0
+  style G fill:#6c757d,color:#fff,stroke:#565e64
+  style H fill:#20c997,color:#fff,stroke:#1aa179
+  style I fill:#e83e8c,color:#fff,stroke:#d63384
+  style J fill:#6610f2,color:#fff,stroke:#520dc2
+  style K fill:#ffc107,color:#000,stroke:#cc9a06
+  style MAIN fill:#f0f4ff,stroke:#0d6efd,stroke-width:2px,color:#0d6efd
+  style ADMIN fill:#fff3e0,stroke:#fd7e14,stroke-width:2px,color:#fd7e14
+            </pre>
+            <pre class="mermaid mermaid-mobile">
+flowchart TD
+  subgraph MAIN["📋 {% trans 'Questionnaire Flow (AI)' %}"]
+    direction TD
+    A["🏗️ 1. {% trans 'Create Project' %}"] --> B["📝 2. {% trans 'Fill Questionnaires' %}"]
+    B --> C["📊 3. {% trans 'Review Responses' %}"]
+    C --> D{"🤖 4. {% trans 'Generate VSM with AI' %}"}
+    D --> E["💾 5. {% trans 'Save VSM' %}"]
+  end
+
+  subgraph ADMIN["⚙️ {% trans 'Admin Flow (Manual)' %}"]
+    direction TD
+    H["🏢 {% trans 'Create Departments' %}"] --> I["📄 {% trans 'Create Forms per Department' %}"]
+    I --> J["🏗️ {% trans 'Create Projects from Admin' %}"]
+    J --> K["✏️ {% trans 'Create VSM Manually' %}"]
+    K --> E
+  end
+
+  E --> F["🗺️ 6. {% trans 'Visualize VSM' %}"]
+  F --> G["🔄 7. {% trans 'Iterate and Improve' %}"]
+  G --> B
+  G --> K
+
+  style A fill:#0d6efd,color:#fff,stroke:#0a58ca
+  style B fill:#6f42c1,color:#fff,stroke:#59359a
+  style C fill:#198754,color:#fff,stroke:#146c43
+  style D fill:#fd7e14,color:#fff,stroke:#dc6a12
+  style E fill:#dc3545,color:#fff,stroke:#b02a37
+  style F fill:#0dcaf0,color:#000,stroke:#0aa2c0
+  style G fill:#6c757d,color:#fff,stroke:#565e64
+  style H fill:#20c997,color:#fff,stroke:#1aa179
+  style I fill:#e83e8c,color:#fff,stroke:#d63384
+  style J fill:#6610f2,color:#fff,stroke:#520dc2
+  style K fill:#ffc107,color:#000,stroke:#cc9a06
+  style MAIN fill:#f0f4ff,stroke:#0d6efd,stroke-width:2px,color:#0d6efd
+  style ADMIN fill:#fff3e0,stroke:#fd7e14,stroke-width:2px,color:#fd7e14
+            </pre>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Steps Explanation -->
+<div class="row mb-4 mb-md-5" id="steps-section" data-intro="{% trans 'These are the steps to generate your Value Stream Map using AI or the Admin panel.' %}" data-step="3">
+  <div class="col-12">
+    <div class="card shadow-sm">
+      <div class="card-header"><strong>🚀 {% trans "Steps to generate your Value Stream Map" %}</strong></div>
+      <div class="card-body">
+        <!-- AI Flow -->
+        <h6 class="text-primary mb-3">📋 {% trans "Option A: Questionnaire Flow (AI)" %}</h6>
+        <div class="row g-3 mb-4">
+          <div class="col-12 col-md-6">
+            <div class="d-flex align-items-start gap-3 mb-3">
+              <div class="step-number" style="background:#0d6efd;">1</div>
+              <div>
+                <strong>{% trans "Create a Project" %}</strong>
+                <p class="text-muted small mb-0">
+                  {% trans "Go to Projects and create or select a project. Each project groups its questionnaires and VSMs." %}
+                </p>
+              </div>
+            </div>
+            <div class="d-flex align-items-start gap-3 mb-3">
+              <div class="step-number" style="background:#6f42c1;">2</div>
+              <div>
+                <strong>{% trans "Fill Questionnaires" %}</strong>
+                <p class="text-muted small mb-0">
+                  {% trans "Within the project, each team fills their questionnaire with process metrics, times and issues." %}
+                </p>
+              </div>
+            </div>
+            <div class="d-flex align-items-start gap-3 mb-3">
+              <div class="step-number" style="background:#198754;">3</div>
+              <div>
+                <strong>{% trans "Review Responses" %}</strong>
+                <p class="text-muted small mb-0">
+                  {% trans "Verify there are enough team responses before generating the VSM." %}
+                </p>
+              </div>
+            </div>
+            <div class="d-flex align-items-start gap-3">
+              <div class="step-number" style="background:#fd7e14;">4</div>
+              <div>
+                <strong>{% trans "Generate VSM with AI" %}</strong>
+                <p class="text-muted small mb-0">
+                  {% trans "AI analyzes the responses and automatically generates a Value Stream Map with time metrics." %}
+                </p>
+              </div>
+            </div>
+          </div>
+          <div class="col-12 col-md-6">
+            <div class="d-flex align-items-start gap-3 mb-3">
+              <div class="step-number" style="background:#dc3545;">5</div>
+              <div>
+                <strong>{% trans "Save the VSM" %}</strong>
+                <p class="text-muted small mb-0">
+                  {% trans "Review the generated VSM, adjust if necessary, and save it to the database." %}
+                </p>
+              </div>
+            </div>
+            <div class="d-flex align-items-start gap-3 mb-3">
+              <div class="step-number" style="background:#0dcaf0;">6</div>
+              <div>
+                <strong>{% trans "Visualize the Map" %}</strong>
+                <p class="text-muted small mb-0">
+                  {% trans "Explore the interactive Value Stream Map with work times, wait times, rework and bottlenecks." %}
+                </p>
+              </div>
+            </div>
+            <div class="d-flex align-items-start gap-3">
+              <div class="step-number" style="background:#6c757d;">7</div>
+              <div>
+                <strong>{% trans "Iterate and Improve" %}</strong>
+                <p class="text-muted small mb-0">
+                  {% trans "Collect new responses, regenerate the VSM and compare to measure continuous improvement." %}
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- Admin Flow -->
+        <hr>
+        <h6 class="text-warning mb-3">⚙️ {% trans "Option B: Admin Flow (Manual)" %}</h6>
+        <div class="row g-3">
+          <div class="col-12 col-md-6">
+            <div class="d-flex align-items-start gap-3 mb-3">
+              <div class="step-number" style="background:#20c997;">1</div>
+              <div>
+                <strong>{% trans "Create Departments" %}</strong>
+                <p class="text-muted small mb-0">
+                  {% trans "From the Admin panel, create the departments that participate in the value stream." %}
+                </p>
+              </div>
+            </div>
+            <div class="d-flex align-items-start gap-3">
+              <div class="step-number" style="background:#e83e8c;">2</div>
+              <div>
+                <strong>{% trans "Create Forms per Department" %}</strong>
+                <p class="text-muted small mb-0">
+                  {% trans "Configure questionnaire forms for each department with their specific questions and metrics." %}
+                </p>
+              </div>
+            </div>
+          </div>
+          <div class="col-12 col-md-6">
+            <div class="d-flex align-items-start gap-3 mb-3">
+              <div class="step-number" style="background:#6610f2;">3</div>
+              <div>
+                <strong>{% trans "Create Projects from Admin" %}</strong>
+                <p class="text-muted small mb-0">
+                  {% trans "Create and configure projects directly from the administration panel." %}
+                </p>
+              </div>
+            </div>
+            <div class="d-flex align-items-start gap-3">
+              <div class="step-number" style="background:#ffc107;">4</div>
+              <div>
+                <strong>{% trans "Create VSM Manually" %}</strong>
+                <p class="text-muted small mb-0">
+                  {% trans "Build the Value Stream Map manually from Admin without using AI, entering metrics and flow data directly." %}
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Navigation Cards -->
+<div class="row g-3 g-md-4 mb-4" id="nav-cards">
+  <div class="col-12 col-sm-6 col-lg-4" data-intro="{% trans 'Access your projects, questionnaires and VSMs organized by project.' %}" data-step="4">
+    <a href="{% url 'vsm:project_list' %}" class="text-decoration-none">
+      <div class="card nav-card border-primary shadow-sm h-100">
+        <div class="card-body d-flex align-items-center gap-3">
+          <span style="font-size:2.5rem;">🏗️</span>
+          <div class="flex-grow-1 min-width-0">
+            <h4 class="mb-1 text-dark">{% trans "Projects" %}</h4>
+            <p class="text-muted mb-0 small">{% trans "Questionnaires, VSMs and diagrams organized by project." %}</p>
+          </div>
+          <span class="ms-auto text-primary d-none d-sm-inline" style="font-size:1.5rem;">→</span>
+        </div>
+      </div>
+    </a>
+  </div>
+  <div class="col-12 col-sm-6 col-lg-4" data-intro="{% trans 'View all generated Value Stream Maps.' %}" data-step="5">
+    <a href="{% url 'vsm:vsm_map_list' %}" class="text-decoration-none">
+      <div class="card nav-card border-danger shadow-sm h-100">
+        <div class="card-body d-flex align-items-center gap-3">
+          <span style="font-size:2.5rem;">📊</span>
+          <div class="flex-grow-1 min-width-0">
+            <h4 class="mb-1 text-dark">{% trans "Value Stream Maps" %}</h4>
+            <p class="text-muted mb-0 small">{% trans "All generated value stream flow maps." %}</p>
+          </div>
+          <span class="ms-auto text-danger d-none d-sm-inline" style="font-size:1.5rem;">→</span>
+        </div>
+      </div>
+    </a>
+  </div>
+  <div class="col-12 col-sm-6 col-lg-4" data-intro="{% trans 'From Admin you can create departments, configure forms per department, create projects and build VSMs manually without AI.' %}" data-step="6">
+    <a href="/admin/" class="text-decoration-none">
+      <div class="card nav-card border-dark shadow-sm h-100">
+        <div class="card-body d-flex align-items-center gap-3">
+          <span style="font-size:2.5rem;">⚙️</span>
+          <div class="flex-grow-1 min-width-0">
+            <h4 class="mb-1 text-dark">{% trans "Administration" %}</h4>
+            <p class="text-muted mb-0 small">{% trans "Create departments, forms, projects and VSMs manually." %}</p>
+          </div>
+          <span class="ms-auto text-dark d-none d-sm-inline" style="font-size:1.5rem;">→</span>
+        </div>
+      </div>
+    </a>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script type="module">
+  import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs';
+  mermaid.initialize({
+    startOnLoad: false,
+    theme: 'base',
+    securityLevel: 'loose',
+    themeVariables: { fontSize: '14px' }
+  });
+
+  // Render only the visible diagram (desktop OR mobile, not both)
+  const isMobile = window.matchMedia('(max-width: 767.98px)').matches;
+  const visibleSelector = isMobile ? '.mermaid-mobile' : '.mermaid-desktop';
+  const hiddenSelector = isMobile ? '.mermaid-desktop' : '.mermaid-mobile';
+  document.querySelector(hiddenSelector)?.classList.remove('mermaid');
+  await mermaid.run({ querySelector: visibleSelector });
+
+  // ── Zoom / Pan (only on desktop diagram) ────────────────────
+  const container = document.getElementById('diagram-container');
+  if (container) {
+    const wrapper = document.getElementById('diagram-wrapper');
+    const zoomLabel = document.getElementById('zoom-level');
+    let scale = 1, panX = 0, panY = 0, dragging = false, startX, startY;
+    let zoomActive = false;
+    const STEP = 0.15, MIN = 0.2, MAX = 4;
+    const btnToggle = document.getElementById('btn-zoom-toggle');
+    const btnIn = document.getElementById('btn-zoom-in');
+    const btnOut = document.getElementById('btn-zoom-out');
+    const btnReset = document.getElementById('btn-zoom-reset');
+
+    function applyTransform() {
+      wrapper.style.transform = `translate(${panX}px, ${panY}px) scale(${scale})`;
+      zoomLabel.textContent = Math.round(scale * 100) + '%';
+    }
+
+    function toggleZoom() {
+      zoomActive = !zoomActive;
+      btnToggle.style.background = zoomActive ? '#0d6efd' : '#fff';
+      btnToggle.style.color = zoomActive ? '#fff' : '#333';
+      btnIn.disabled = !zoomActive;
+      btnOut.disabled = !zoomActive;
+      btnReset.disabled = !zoomActive;
+      wrapper.style.cursor = zoomActive ? 'grab' : 'default';
+    }
+
+    btnToggle.onclick = toggleZoom;
+    btnIn.onclick  = () => { scale = Math.min(MAX, scale + STEP); applyTransform(); };
+    btnOut.onclick = () => { scale = Math.max(MIN, scale - STEP); applyTransform(); };
+    btnReset.onclick = () => { scale = 1; panX = 0; panY = 0; applyTransform(); };
+
+    wrapper.style.cursor = 'default';
+
+    container.addEventListener('wheel', (e) => {
+      if (!zoomActive) return;
+      e.preventDefault();
+      scale = Math.min(MAX, Math.max(MIN, scale + (e.deltaY > 0 ? -STEP : STEP)));
+      applyTransform();
+    }, { passive: false });
+
+    container.addEventListener('mousedown', (e) => { if (!zoomActive) return; dragging = true; startX = e.clientX - panX; startY = e.clientY - panY; });
+    window.addEventListener('mousemove', (e) => { if (!dragging) return; panX = e.clientX - startX; panY = e.clientY - startY; applyTransform(); });
+    window.addEventListener('mouseup', () => { dragging = false; });
+  }
+
+  // ── Intro.js Tutorial ───────────────────────────────────────
+  document.getElementById('btn-tutorial').addEventListener('click', () => {
+    introJs().setOptions({
+      nextLabel: '{{ LANGUAGE_CODE }}' === 'es' ? 'Siguiente →' : 'Next →',
+      prevLabel: '{{ LANGUAGE_CODE }}' === 'es' ? '← Anterior' : '← Back',
+      doneLabel: '{{ LANGUAGE_CODE }}' === 'es' ? '¡Listo!' : 'Done!',
+      skipLabel: '✕',
+      showBullets: true,
+      showProgress: true,
+    }).start();
+  });
+</script>
+{% endblock %}

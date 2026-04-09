@@ -1,0 +1,25 @@
+{% extends "vsm/base.html" %}
+{% load i18n %}
+
+{% block title %}{% trans "Thank You" %} – {{ category.name }}{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-md-8 text-center py-5">
+    <div class="mb-4" style="font-size: 4rem;">✅</div>
+    <h2>{% trans "Thank you!" %}</h2>
+    <p class="lead text-muted">
+      {% blocktrans with name=category.name %}Your <strong>{{ name }}</strong> questionnaire has been recorded successfully.{% endblocktrans %}
+    </p>
+    <div class="d-flex flex-wrap justify-content-center gap-3 mt-4">
+      {% if project %}
+      <a href="{% url 'vsm:project_detail' slug=project.slug %}" class="btn btn-primary">{% trans "Back to project" %}</a>
+      <a href="{% url 'vsm:project_questionnaire' project_slug=project.slug slug=category.slug %}" class="btn btn-outline-secondary">{% trans "Fill again" %}</a>
+      {% else %}
+      <a href="{% url 'vsm:index' %}" class="btn btn-primary">{% trans "Back to Value Stream Map" %}</a>
+      <a href="{% url 'vsm:questionnaire' slug=category.slug %}" class="btn btn-outline-secondary">{% trans "Fill again" %}</a>
+      {% endif %}
+    </div>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,48 @@
+/* ATHINA VSM – Custom styles */
+
+body {
+  background-color: #f8f9fa;
+}
+
+.editable-cell {
+  min-width: 100px;
+  min-height: 1.5em;
+  padding: .375rem .5rem;
+}
+
+.editable-cell:focus {
+  outline: 2px solid #0d6efd;
+  background-color: #fff;
+}
+
+/* Bootstrap-compatible checkbox list styling for Django CheckboxSelectMultiple */
+.form-check-input {
+  margin-right: .5rem;
+}
+
+/* Fix Django CheckboxSelectMultiple widget wrapper */
+form div[id^="id_"] > div {
+  display: flex;
+  align-items: center;
+  padding: .35rem 0;
+}
+
+form div[id^="id_"] > div > label {
+  display: flex;
+  align-items: center;
+  gap: .4rem;
+  cursor: pointer;
+  margin: 0;
+}
+
+form div[id^="id_"] > div input[type="checkbox"] {
+  width: 1.1em;
+  height: 1.1em;
+  flex-shrink: 0;
+  margin: 0;
+  position: static;
+}
+
+.card-header {
+  font-weight: 600;
+}

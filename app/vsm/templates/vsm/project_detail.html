@@ -1,0 +1,247 @@
+{% extends "vsm/base.html" %}
+{% load i18n %}
+
+{% block title %}{{ project.name }} – VSM{% endblock %}
+
+{% block extra_head %}
+<style>
+  .cat-card { transition: transform .15s; cursor: pointer; }
+  .cat-card:hover { transform: translateY(-4px); box-shadow: 0 .5rem 1rem rgba(0,0,0,.15); }
+  .badge-responses { position: absolute; top: .5rem; right: .5rem; }
+  #diagram-container {
+    position: relative;
+    border: 1px solid #dee2e6;
+    border-radius: .5rem;
+    overflow: hidden;
+    background: #fafafa;
+    min-height: 350px;
+  }
+  #diagram-wrapper {
+    transform-origin: 0 0;
+    cursor: default;
+    padding: 2rem;
+    display: inline-block;
+    min-width: 100%;
+  }
+  #diagram-wrapper:active { cursor: grabbing; }
+  #diagram-wrapper .mermaid { display: flex; justify-content: center; }
+  .zoom-controls {
+    position: absolute; top: .75rem; right: .75rem; z-index: 10;
+    display: flex; flex-direction: column; gap: .25rem;
+  }
+  .zoom-controls button {
+    width: 32px; height: 32px; border: 1px solid #dee2e6;
+    background: #fff; border-radius: .375rem; font-size: 1rem;
+    cursor: pointer; display: flex; align-items: center; justify-content: center;
+    box-shadow: 0 1px 3px rgba(0,0,0,.1);
+  }
+  .zoom-controls button:hover { background: #f0f0f0; }
+  .zoom-badge { text-align: center; font-size: .65rem; color: #6c757d; }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+  <div class="col-12">
+    <nav aria-label="breadcrumb">
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{% url 'vsm:index' %}">Home</a></li>
+        <li class="breadcrumb-item"><a href="{% url 'vsm:project_list' %}">{% trans "Projects" %}</a></li>
+        <li class="breadcrumb-item active">{{ project.name }}</li>
+      </ol>
+    </nav>
+    <h2 style="color: {{ project.color }};">{{ project.name }}</h2>
+    {% if project.description %}
+    <p class="text-muted">{{ project.description }}</p>
+    {% endif %}
+  </div>
+</div>
+
+<!-- Project Diagrams (Mermaid) -->
+{% if diagram %}
+<div class="row mb-4">
+  <div class="col-12">
+    <h3>🗺️ {% trans "Project Diagram" %}</h3>
+  </div>
+</div>
+<div class="row mb-4">
+  <div class="col-12">
+    <div class="card shadow-sm">
+      <div class="card-header d-flex justify-content-between align-items-center">
+        <div>
+          <strong>{{ diagram.name }}</strong>
+          {% if diagrams.count > 1 %}
+          <span class="text-muted ms-2 small">
+            ({{ diagrams.count }} diagramas —
+            {% for d in diagrams %}{% if d.slug != diagram.slug %}<a href="{% url 'vsm:diagram_view' slug=d.slug %}">{{ d.name }}</a>{% if not forloop.last %}, {% endif %}{% endif %}{% endfor %})
+          </span>
+          {% endif %}
+        </div>
+        <a href="{% url 'vsm:diagram_view' slug=diagram.slug %}" class="btn btn-sm btn-outline-primary">⛶ {% trans "Full view" %}</a>
+      </div>
+      <div class="card-body p-0">
+        <div id="diagram-container">
+          <div class="zoom-controls">
+            <button id="btn-zoom-toggle" title="Activar/desactivar zoom" style="font-size:.7rem; width:auto; padding:0 6px;">🔍 Zoom</button>
+            <button id="btn-zoom-in" title="Zoom In" disabled>+</button>
+            <div class="zoom-badge" id="zoom-level">100%</div>
+            <button id="btn-zoom-out" title="Zoom Out" disabled>−</button>
+            <button id="btn-zoom-reset" title="Reset" style="font-size:.75rem;" disabled>↺</button>
+          </div>
+          <div id="diagram-wrapper">
+            <pre class="mermaid">{{ diagram.mermaid_code }}</pre>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% else %}
+<div class="row mb-4">
+  <div class="col-12">
+    <div class="alert alert-info">
+      🗺️ {% trans "This project has no Mermaid diagrams yet." %}
+      <a href="/admin/vsm/diagram/add/" target="_blank">{% trans "Create one from Admin" %}</a>.
+    </div>
+  </div>
+</div>
+{% endif %}
+
+<!-- VSM Maps for this project -->
+<div class="row mb-4">
+  <div class="col-12 d-flex justify-content-between align-items-center">
+    <h3>📊 {% trans "Value Stream Maps" %}</h3>
+    {% if can_manage %}
+    <a href="{% url 'vsm:generate_vsm' slug=project.slug %}" class="btn btn-outline-primary">
+      🤖 {% trans "Generate VSM with AI" %}
+    </a>
+    {% endif %}
+  </div>
+</div>
+
+{% if value_streams %}
+<div class="row g-3 mb-5">
+  {% for vs in value_streams %}
+  <div class="col-12 col-sm-6 col-lg-4">
+    <a href="{% url 'vsm:vsm_map' slug=vs.slug %}" class="text-decoration-none">
+      <div class="card h-100 shadow-sm" style="border-left: 4px solid {{ project.color }}; cursor:pointer; transition: transform .15s;">
+        <div class="card-body">
+          <h5 class="card-title text-dark">📊 {{ vs.name }}</h5>
+          {% if vs.description %}
+          <p class="card-text text-muted small">{{ vs.description|truncatewords:20 }}</p>
+          {% endif %}
+          <div class="d-flex gap-3 mt-2">
+            <span class="badge bg-secondary">{{ vs.steps.count }} {% trans "steps" %}</span>
+            <span class="badge bg-danger">Lead Time: {{ vs.lead_time|floatformat:1 }}h</span>
+          </div>
+        </div>
+        <div class="card-footer text-muted small">
+          {% trans "Updated" %}: {{ vs.updated_at|date:"d M Y H:i" }}
+        </div>
+      </div>
+    </a>
+  </div>
+  {% endfor %}
+</div>
+{% else %}
+<div class="alert alert-secondary mb-5">
+  {% trans "This project has no VSM maps yet." %} <a href="/admin/vsm/valuestream/add/">{% trans "Use the admin panel to create one." %}</a>
+</div>
+{% endif %}
+
+<!-- Questionnaires scoped to this project -->
+<div class="row mb-4">
+  <div class="col-12">
+    <h3>📋 {% trans "Project Questionnaires" %}</h3>
+    <p class="text-muted">{% blocktrans with name=project.name %}Responses will be linked to <strong>{{ name }}</strong>.{% endblocktrans %}</p>
+  </div>
+</div>
+
+<div class="row g-3">
+  {% for cat in categories %}
+  <div class="col-6 col-md-4 col-lg-3">
+    <div class="card cat-card h-100 position-relative"
+         style="border-left: 4px solid {{ cat.color }};">
+      {% if cat.response_count > 0 %}
+      <span class="badge bg-success badge-responses">{{ cat.response_count }}</span>
+      {% endif %}
+      <div class="card-body">
+        <h5 class="card-title" style="color: {{ cat.color }};">{{ cat.name }}</h5>
+        <div class="d-flex flex-column gap-1 mt-2">
+          {% if can_edit %}
+          <a href="{% url 'vsm:project_questionnaire' project_slug=project.slug slug=cat.slug %}"
+             class="btn btn-sm btn-outline-primary">
+            ➕ {% trans "Fill questionnaire" %}
+          </a>
+          {% endif %}
+          {% if cat.response_count > 0 %}
+          <a href="{% url 'vsm:response_list' project_slug=project.slug slug=cat.slug %}"
+             class="btn btn-sm btn-outline-secondary">
+            📋 {% trans "View responses" %} ({{ cat.response_count }})
+          </a>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+  {% endfor %}
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script type="module">
+  import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs';
+  mermaid.initialize({
+    startOnLoad: true,
+    theme: 'base',
+    securityLevel: 'loose',
+    themeVariables: { fontSize: '14px' }
+  });
+
+  const container = document.getElementById('diagram-container');
+  if (container) {
+    const wrapper = document.getElementById('diagram-wrapper');
+    const zoomLabel = document.getElementById('zoom-level');
+    let scale = 1, panX = 0, panY = 0, dragging = false, startX, startY;
+    let zoomActive = false;
+    const STEP = 0.15, MIN = 0.2, MAX = 4;
+    const btnToggle = document.getElementById('btn-zoom-toggle');
+    const btnIn = document.getElementById('btn-zoom-in');
+    const btnOut = document.getElementById('btn-zoom-out');
+    const btnReset = document.getElementById('btn-zoom-reset');
+
+    function applyTransform() {
+      wrapper.style.transform = `translate(${panX}px, ${panY}px) scale(${scale})`;
+      zoomLabel.textContent = Math.round(scale * 100) + '%';
+    }
+
+    function toggleZoom() {
+      zoomActive = !zoomActive;
+      btnToggle.style.background = zoomActive ? '#0d6efd' : '#fff';
+      btnToggle.style.color = zoomActive ? '#fff' : '#333';
+      btnIn.disabled = !zoomActive;
+      btnOut.disabled = !zoomActive;
+      btnReset.disabled = !zoomActive;
+      wrapper.style.cursor = zoomActive ? 'grab' : 'default';
+    }
+
+    btnToggle.onclick = toggleZoom;
+    btnIn.onclick  = () => { scale = Math.min(MAX, scale + STEP); applyTransform(); };
+    btnOut.onclick = () => { scale = Math.max(MIN, scale - STEP); applyTransform(); };
+    btnReset.onclick = () => { scale = 1; panX = 0; panY = 0; applyTransform(); };
+
+    wrapper.style.cursor = 'default';
+
+    container.addEventListener('wheel', (e) => {
+      if (!zoomActive) return;
+      e.preventDefault();
+      scale = Math.min(MAX, Math.max(MIN, scale + (e.deltaY > 0 ? -STEP : STEP)));
+      applyTransform();
+    }, { passive: false });
+
+    container.addEventListener('mousedown', (e) => { if (!zoomActive) return; dragging = true; startX = e.clientX - panX; startY = e.clientY - panY; });
+    window.addEventListener('mousemove', (e) => { if (!dragging) return; panX = e.clientX - startX; panY = e.clientY - startY; applyTransform(); });
+    window.addEventListener('mouseup', () => { dragging = false; });
+  }
+</script>
+{% endblock %}

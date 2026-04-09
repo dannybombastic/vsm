@@ -1,0 +1,482 @@
+# ATHINA VSM – Spanish translations
+# Copyright (C) 2024 ATHINA LOT1 DevSecOps Team
+# This file is distributed under the same license as the ATHINA VSM package.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: ATHINA VSM 1.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-03-23 12:00+0100\n"
+"PO-Revision-Date: 2026-03-23 12:00+0100\n"
+"Last-Translator: DevSecOps Team\n"
+"Language-Team: Spanish\n"
+"Language: es\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+# ── settings.py ──────────────────────────────────────────────────
+
+msgid "Español"
+msgstr "Español"
+
+msgid "English"
+msgstr "Inglés"
+
+# ── index.html – Hero ────────────────────────────────────────────
+
+msgid "Welcome to ATHINA VSM! This tool helps you generate Value Stream Maps from team questionnaires."
+msgstr "¡Bienvenido a ATHINA VSM! Esta herramienta te ayuda a generar Mapas de Flujo de Valor a partir de cuestionarios de equipo."
+
+msgid "Tool for analysis and generation of Value Stream Maps from team questionnaires."
+msgstr "Herramienta de análisis y generación de Mapas de Flujo de Valor a partir de cuestionarios de equipo."
+
+msgid "Start tutorial"
+msgstr "Iniciar tutorial"
+
+msgid "Tutorial"
+msgstr "Tutorial"
+
+# ── index.html – Flow Diagram ───────────────────────────────────
+
+msgid "This diagram shows the step-by-step flow of the application."
+msgstr "Este diagrama muestra el flujo paso a paso de la aplicación."
+
+msgid "How to use this app?"
+msgstr "¿Cómo usar esta aplicación?"
+
+msgid "Toggle zoom"
+msgstr "Activar/desactivar zoom"
+
+msgid "Create Project"
+msgstr "Crear Proyecto"
+
+msgid "Fill Questionnaires"
+msgstr "Rellenar Cuestionarios"
+
+msgid "Review Responses"
+msgstr "Revisar Respuestas"
+
+msgid "Generate VSM"
+msgstr "Generar VSM"
+
+msgid "with AI"
+msgstr "con IA"
+
+msgid "Save VSM"
+msgstr "Guardar VSM"
+
+msgid "Visualize"
+msgstr "Visualizar"
+
+msgid "Value Stream Map"
+msgstr "Mapa de Flujo de Valor"
+
+msgid "Iterate and"
+msgstr "Iterar y"
+
+msgid "Improve"
+msgstr "Mejorar"
+
+msgid "Generate VSM with AI"
+msgstr "Generar VSM con IA"
+
+msgid "Visualize VSM"
+msgstr "Visualizar VSM"
+
+msgid "Iterate and Improve"
+msgstr "Iterar y Mejorar"
+
+# ── index.html – Steps ──────────────────────────────────────────
+
+msgid "These are the 7 steps to generate your Value Stream Map."
+msgstr "Estos son los 7 pasos para generar tu Mapa de Flujo de Valor."
+
+msgid "Steps to generate your Value Stream Map"
+msgstr "Pasos para generar tu Mapa de Flujo de Valor"
+
+msgid "Create a Project"
+msgstr "Crear un Proyecto"
+
+msgid "Go to Projects and create or select a project. Each project groups its questionnaires and VSMs."
+msgstr "Ve a Proyectos y crea o selecciona un proyecto. Cada proyecto agrupa sus cuestionarios y VSMs."
+
+msgid "Within the project, each team fills their questionnaire with process metrics, times and issues."
+msgstr "Dentro del proyecto, cada equipo rellena su cuestionario con métricas de proceso, tiempos y problemas."
+
+msgid "Verify there are enough team responses before generating the VSM."
+msgstr "Verifica que hay suficientes respuestas de los equipos antes de generar el VSM."
+
+msgid "AI analyzes the responses and automatically generates a Value Stream Map with time metrics."
+msgstr "La IA analiza las respuestas y genera automáticamente un Mapa de Flujo de Valor con métricas de tiempo."
+
+msgid "Save the VSM"
+msgstr "Guardar el VSM"
+
+msgid "Review the generated VSM, adjust if necessary, and save it to the database."
+msgstr "Revisa el VSM generado, ajusta si es necesario y guárdalo en la base de datos."
+
+msgid "Visualize the Map"
+msgstr "Visualizar el Mapa"
+
+msgid "Explore the interactive Value Stream Map with work times, wait times, rework and bottlenecks."
+msgstr "Explora el Mapa de Flujo de Valor interactivo con tiempos de trabajo, tiempos de espera, retrabajo y cuellos de botella."
+
+msgid "Collect new responses, regenerate the VSM and compare to measure continuous improvement."
+msgstr "Recoge nuevas respuestas, regenera el VSM y compara para medir la mejora continua."
+
+# ── index.html – Navigation Cards ───────────────────────────────
+
+msgid "Access your projects, questionnaires and VSMs organized by project."
+msgstr "Accede a tus proyectos, cuestionarios y VSMs organizados por proyecto."
+
+msgid "Projects"
+msgstr "Proyectos"
+
+msgid "Questionnaires, VSMs and diagrams organized by project."
+msgstr "Cuestionarios, VSMs y diagramas organizados por proyecto."
+
+msgid "View all generated Value Stream Maps."
+msgstr "Ver todos los Mapas de Flujo de Valor generados."
+
+msgid "Value Stream Maps"
+msgstr "Mapas de Flujo de Valor"
+
+msgid "All generated value stream flow maps."
+msgstr "Todos los mapas de flujo de valor generados."
+
+msgid "Configure AI, manage data and diagrams from the admin panel."
+msgstr "Configura la IA, gestiona datos y diagramas desde el panel de administración."
+
+msgid "Administration"
+msgstr "Administración"
+
+msgid "Configure AI, manage data and diagrams."
+msgstr "Configura la IA, gestiona datos y diagramas."
+
+# ── index.html – Diagram subgraph labels & admin flow ───────────
+
+msgid "Questionnaire Flow (AI)"
+msgstr "Flujo por Cuestionarios (IA)"
+
+msgid "Admin Flow (Manual)"
+msgstr "Flujo Admin (Manual)"
+
+msgid "Create Departments"
+msgstr "Crear Departamentos"
+
+msgid "Create Forms"
+msgstr "Crear Formularios"
+
+msgid "per Department"
+msgstr "por Departamento"
+
+msgid "Create Projects"
+msgstr "Crear Proyectos"
+
+msgid "from Admin"
+msgstr "desde Admin"
+
+msgid "Create VSM"
+msgstr "Crear VSM"
+
+msgid "Manually"
+msgstr "Manualmente"
+
+msgid "Create Forms per Department"
+msgstr "Crear Formularios por Departamento"
+
+msgid "Create Projects from Admin"
+msgstr "Crear Proyectos desde Admin"
+
+msgid "Create VSM Manually"
+msgstr "Crear VSM Manualmente"
+
+# ── index.html – Steps section (updated) ────────────────────────
+
+msgid "These are the steps to generate your Value Stream Map using AI or the Admin panel."
+msgstr "Estos son los pasos para generar tu Mapa de Flujo de Valor usando IA o el panel de Admin."
+
+msgid "Option A: Questionnaire Flow (AI)"
+msgstr "Opción A: Flujo por Cuestionarios (IA)"
+
+msgid "Option B: Admin Flow (Manual)"
+msgstr "Opción B: Flujo Admin (Manual)"
+
+msgid "From the Admin panel, create the departments that participate in the value stream."
+msgstr "Desde el panel de Admin, crea los departamentos que participan en el flujo de valor."
+
+msgid "Configure questionnaire forms for each department with their specific questions and metrics."
+msgstr "Configura formularios de cuestionario para cada departamento con sus preguntas y métricas específicas."
+
+msgid "Create and configure projects directly from the administration panel."
+msgstr "Crea y configura proyectos directamente desde el panel de administración."
+
+msgid "Build the Value Stream Map manually from Admin without using AI, entering metrics and flow data directly."
+msgstr "Construye el Mapa de Flujo de Valor manualmente desde Admin sin usar IA, ingresando métricas y datos de flujo directamente."
+
+# ── index.html – Admin card (updated) ───────────────────────────
+
+msgid "From Admin you can create departments, configure forms per department, create projects and build VSMs manually without AI."
+msgstr "Desde Admin puedes crear departamentos, configurar formularios por departamento, crear proyectos y construir VSMs manualmente sin IA."
+
+msgid "Create departments, forms, projects and VSMs manually."
+msgstr "Crea departamentos, formularios, proyectos y VSMs manualmente."
+
+# ── project_list.html ────────────────────────────────────────────
+
+msgid "Select a project to view its value stream maps and associated questionnaires."
+msgstr "Selecciona un proyecto para ver sus mapas de flujo de valor y cuestionarios asociados."
+
+msgid "response"
+msgstr "respuesta"
+
+msgid "No projects created yet."
+msgstr "Aún no se han creado proyectos."
+
+msgid "Use the admin panel to create one."
+msgstr "Usa el panel de administración para crear uno."
+
+# ── project_detail.html ──────────────────────────────────────────
+
+msgid "Project Diagram"
+msgstr "Diagrama del Proyecto"
+
+msgid "Full view"
+msgstr "Vista completa"
+
+msgid "This project has no Mermaid diagrams yet."
+msgstr "Este proyecto aún no tiene diagramas Mermaid."
+
+msgid "Create one from Admin"
+msgstr "Crea uno desde Admin"
+
+msgid "steps"
+msgstr "pasos"
+
+msgid "Updated"
+msgstr "Actualizado"
+
+msgid "This project has no VSM maps yet."
+msgstr "Este proyecto aún no tiene mapas VSM."
+
+msgid "Project Questionnaires"
+msgstr "Cuestionarios del Proyecto"
+
+#, python-format
+msgid "Responses will be linked to <strong>%(name)s</strong>."
+msgstr "Las respuestas se vincularán a <strong>%(name)s</strong>."
+
+msgid "Fill questionnaire"
+msgstr "Rellenar cuestionario"
+
+# ── form.html ────────────────────────────────────────────────────
+
+msgid "VSM Questionnaire"
+msgstr "Cuestionario VSM"
+
+msgid "Home"
+msgstr "Inicio"
+
+msgid "Project"
+msgstr "Proyecto"
+
+msgid "Respondent Information"
+msgstr "Información del Encuestado"
+
+msgid "Name"
+msgstr "Nombre"
+
+msgid "Role"
+msgstr "Rol"
+
+msgid "Section"
+msgstr "Sección"
+
+msgid "Add row"
+msgstr "Añadir fila"
+
+msgid "Submit Questionnaire"
+msgstr "Enviar Cuestionario"
+
+msgid "Cancel"
+msgstr "Cancelar"
+
+# ── generate_vsm.html ───────────────────────────────────────────
+
+msgid "Generate Value Stream Map with AI"
+msgstr "Generar Mapa de Flujo de Valor con IA"
+
+#, python-format
+msgid "The AI will analyze all questionnaire responses from project <strong style=\"color: %(color)s\">%(name)s</strong> and generate a complete value stream map with time metrics."
+msgstr "La IA analizará todas las respuestas de cuestionarios del proyecto <strong style=\"color: %(color)s\">%(name)s</strong> y generará un mapa de flujo de valor completo con métricas de tiempo."
+
+msgid "Available responses"
+msgstr "Respuestas disponibles"
+
+msgid "There are no questionnaire responses for this project."
+msgstr "No hay respuestas de cuestionarios para este proyecto."
+
+msgid "Teams must"
+msgstr "Los equipos deben"
+
+msgid "fill out the questionnaires"
+msgstr "rellenar los cuestionarios"
+
+msgid "first."
+msgstr "primero."
+
+msgid "AI not configured"
+msgstr "IA no configurada"
+
+msgid "To generate VSMs with AI, go to the admin panel and configure the connection:"
+msgstr "Para generar VSMs con IA, ve al panel de administración y configura la conexión:"
+
+msgid "Configure AI in Admin"
+msgstr "Configurar IA en Admin"
+
+msgid "model"
+msgstr "modelo"
+
+#, python-format
+msgid "The AI will analyze %(count)s responses and generate a complete value stream map."
+msgstr "La IA analizará %(count)s respuestas y generará un mapa de flujo de valor completo."
+
+msgid "VSM Generated"
+msgstr "VSM Generado"
+
+msgid "Process steps"
+msgstr "Pasos del proceso"
+
+msgid "Step"
+msgstr "Paso"
+
+msgid "Team"
+msgstr "Equipo"
+
+msgid "Row"
+msgstr "Fila"
+
+msgid "Work Time (h)"
+msgstr "Tiempo de Trabajo (h)"
+
+msgid "Wait Time (h)"
+msgstr "Tiempo de Espera (h)"
+
+msgid "Rework"
+msgstr "Retrabajo"
+
+msgid "People"
+msgstr "Personas"
+
+msgid "Flow"
+msgstr "Flujo"
+
+msgid "AI Analysis"
+msgstr "Análisis de IA"
+
+msgid "Save VSM to database"
+msgstr "Guardar VSM en base de datos"
+
+msgid "Regenerate"
+msgstr "Regenerar"
+
+msgid "View full generated JSON"
+msgstr "Ver JSON generado completo"
+
+# ── thank_you.html ───────────────────────────────────────────────
+
+msgid "Thank You"
+msgstr "Gracias"
+
+msgid "Thank you!"
+msgstr "¡Gracias!"
+
+#, python-format
+msgid "Your <strong>%(name)s</strong> questionnaire has been recorded successfully."
+msgstr "Tu cuestionario de <strong>%(name)s</strong> se ha registrado correctamente."
+
+msgid "Back to project"
+msgstr "Volver al proyecto"
+
+msgid "Fill again"
+msgstr "Rellenar de nuevo"
+
+msgid "Back to Value Stream Map"
+msgstr "Volver al Mapa de Flujo de Valor"
+
+# ── response_list.html ───────────────────────────────────────────
+
+msgid "Responses"
+msgstr "Respuestas"
+
+#, python-format
+msgid "%(count)s responses for project <strong>%(name)s</strong>."
+msgstr "%(count)s respuestas para el proyecto <strong>%(name)s</strong>."
+
+msgid "New Response"
+msgstr "Nueva Respuesta"
+
+msgid "Respondent"
+msgstr "Encuestado"
+
+msgid "Submitted"
+msgstr "Enviado"
+
+msgid "Last Updated"
+msgstr "Última Actualización"
+
+msgid "Actions"
+msgstr "Acciones"
+
+msgid "Edit"
+msgstr "Editar"
+
+msgid "Delete"
+msgstr "Eliminar"
+
+msgid "Are you sure you want to delete this response?"
+msgstr "¿Estás seguro de que quieres eliminar esta respuesta?"
+
+msgid "No responses yet for this category."
+msgstr "Aún no hay respuestas para esta categoría."
+
+msgid "Fill the first questionnaire"
+msgstr "Rellenar el primer cuestionario"
+
+# ── form.html (edit mode) ───────────────────────────────────────
+
+msgid "Edit Response"
+msgstr "Editar Respuesta"
+
+msgid "Update Response"
+msgstr "Actualizar Respuesta"
+
+# ── project_detail.html (response links) ────────────────────────
+
+msgid "View responses"
+msgstr "Ver respuestas"
+
+# ── Authentication ──────────────────────────────────────────────
+
+msgid "Login"
+msgstr "Iniciar sesión"
+
+msgid "Sign in"
+msgstr "Iniciar sesión"
+
+msgid "Sign in to continue"
+msgstr "Inicia sesión para continuar"
+
+msgid "Username"
+msgstr "Usuario"
+
+msgid "Password"
+msgstr "Contraseña"
+
+msgid "Invalid username or password. Please try again."
+msgstr "Usuario o contraseña incorrectos. Inténtalo de nuevo."
+
+msgid "Logout"
+msgstr "Cerrar sesión"

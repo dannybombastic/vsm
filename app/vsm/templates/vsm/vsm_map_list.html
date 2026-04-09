@@ -1,0 +1,51 @@
+{% extends "vsm/base.html" %}
+
+{% block title %}Value Stream Maps{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+  <div class="col-12">
+    <nav aria-label="breadcrumb">
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{% url 'vsm:index' %}">Home</a></li>
+        <li class="breadcrumb-item active">Value Stream Maps</li>
+      </ol>
+    </nav>
+    <h2>📊 Value Stream Maps</h2>
+    <p class="text-muted">Mapas de flujo de valor con métricas de tiempos de proceso, espera y bucles de retrabajo.</p>
+  </div>
+</div>
+
+{% if streams %}
+<div class="row g-3">
+  {% for vs in streams %}
+  <div class="col-md-6 col-lg-4">
+    <a href="{% url 'vsm:vsm_map' slug=vs.slug %}" class="text-decoration-none">
+      <div class="card h-100 shadow-sm" style="border-left: 4px solid #dc2626; cursor:pointer; transition: transform .15s;">
+        <div class="card-body">
+          <h5 class="card-title text-dark">📊 {{ vs.name }}</h5>
+          {% if vs.project %}
+          <span class="badge mb-2" style="background-color: {{ vs.project.color }};">{{ vs.project.name }}</span>
+          {% endif %}
+          {% if vs.description %}
+          <p class="card-text text-muted small">{{ vs.description }}</p>
+          {% endif %}
+          <div class="d-flex gap-3 mt-2">
+            <span class="badge bg-secondary">{{ vs.steps.count }} pasos</span>
+            <span class="badge bg-danger">Lead Time: {{ vs.lead_time|floatformat:1 }}h</span>
+          </div>
+        </div>
+        <div class="card-footer text-muted small">
+          Actualizado: {{ vs.updated_at|date:"d M Y H:i" }}
+        </div>
+      </div>
+    </a>
+  </div>
+  {% endfor %}
+</div>
+{% else %}
+<div class="alert alert-info">
+  No hay mapas de flujo de valor creados aún. Usa el <a href="/admin/vsm/valuestream/add/">panel de admin</a> para crear uno.
+</div>
+{% endif %}
+{% endblock %}

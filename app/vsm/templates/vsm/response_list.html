@@ -1,0 +1,112 @@
+{% extends "vsm/base.html" %}
+{% load i18n %}
+
+{% block title %}{{ category.name }} – {% trans "Responses" %} – {{ project.name }}{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+  <div class="col-12">
+    <nav aria-label="breadcrumb">
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{% url 'vsm:index' %}">{% trans "Home" %}</a></li>
+        <li class="breadcrumb-item"><a href="{% url 'vsm:project_list' %}">{% trans "Projects" %}</a></li>
+        <li class="breadcrumb-item"><a href="{% url 'vsm:project_detail' slug=project.slug %}">{{ project.name }}</a></li>
+        <li class="breadcrumb-item active" style="color: {{ category.color }};">{{ category.name }}</li>
+      </ol>
+    </nav>
+
+    <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
+      <div>
+        <h2 style="color: {{ category.color }};">📋 {{ category.name }} – {% trans "Responses" %}</h2>
+        <p class="text-muted mb-0">
+          {% blocktrans with count=responses|length name=project.name %}{{ count }} responses for project <strong>{{ name }}</strong>.{% endblocktrans %}
+        </p>
+      </div>
+      {% if can_edit %}
+      <a href="{% url 'vsm:project_questionnaire' project_slug=project.slug slug=category.slug %}"
+         class="btn btn-primary">
+        ➕ {% trans "New Response" %}
+      </a>
+      {% endif %}
+    </div>
+  </div>
+</div>
+
+{% if responses %}
+<div class="row">
+  <div class="col-12">
+    <div class="card shadow-sm">
+      <div class="table-responsive">
+        <table class="table table-hover mb-0">
+          <thead class="table-light">
+            <tr>
+              <th>{% trans "Respondent" %}</th>
+              <th>{% trans "Role" %}</th>
+              <th>{% trans "Submitted" %}</th>
+              <th>{% trans "Last Updated" %}</th>
+              {% if can_edit %}<th class="text-end">{% trans "Actions" %}</th>{% endif %}
+            </tr>
+          </thead>
+          <tbody>
+            {% for resp in responses %}
+            <tr>
+              <td>
+                <strong>{{ resp.respondent_name }}</strong>
+              </td>
+              <td class="text-muted">{{ resp.respondent_role|default:"—" }}</td>
+              <td class="text-muted small">{{ resp.submitted_at|date:"d M Y H:i" }}</td>
+              <td class="text-muted small">
+                {% if resp.updated_at and resp.updated_at != resp.submitted_at %}
+                  {{ resp.updated_at|date:"d M Y H:i" }}
+                {% else %}
+                  —
+                {% endif %}
+              </td>
+              <td class="text-end">
+                {% if can_edit %}
+                <a href="{% url 'vsm:response_edit' project_slug=project.slug pk=resp.pk %}"
+                   class="btn btn-sm btn-outline-primary me-1"
+                   title="{% trans 'Edit' %}">
+                  ✏️ {% trans "Edit" %}
+                </a>
+                <form method="post"
+                      action="{% url 'vsm:response_delete' project_slug=project.slug pk=resp.pk %}"
+                      class="d-inline"
+                      onsubmit="return confirm('{% trans "Are you sure you want to delete this response?" %}');">
+                  {% csrf_token %}
+                  <button type="submit" class="btn btn-sm btn-outline-danger"
+                          title="{% trans 'Delete' %}">
+                    🗑️ {% trans "Delete" %}
+                  </button>
+                </form>
+                {% endif %}
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+{% else %}
+<div class="row">
+  <div class="col-12">
+    <div class="alert alert-info">
+      {% trans "No responses yet for this category." %}
+      <a href="{% url 'vsm:project_questionnaire' project_slug=project.slug slug=category.slug %}">
+        {% trans "Fill the first questionnaire" %}
+      </a>.
+    </div>
+  </div>
+</div>
+{% endif %}
+
+<div class="row mt-4">
+  <div class="col-12">
+    <a href="{% url 'vsm:project_detail' slug=project.slug %}" class="btn btn-outline-secondary">
+      ← {% trans "Back to project" %}
+    </a>
+  </div>
+</div>
+{% endblock %}

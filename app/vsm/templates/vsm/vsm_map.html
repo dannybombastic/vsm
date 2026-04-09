@@ -1,0 +1,468 @@
+{% extends "vsm/base.html" %}
+
+{% block title %}{{ vs.name }} – Value Stream Map{% endblock %}
+
+{% block extra_head %}
+<style>
+  :root {
+    --step-min-w: 120px;
+    --arrow-w: 48px;
+  }
+
+  /* ── Flow container ── */
+  .vsm-flow-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 0;
+    overflow-x: auto;
+    padding: 1.5rem 0;
+  }
+
+  /* ── Process step card ── */
+  .vsm-step {
+    min-width: var(--step-min-w);
+    max-width: 160px;
+    flex-shrink: 0;
+    border: 2px solid var(--step-color, #999);
+    border-radius: 6px;
+    background: #fff;
+    text-align: center;
+    position: relative;
+  }
+  .vsm-step-header {
+    font-size: .7rem;
+    font-weight: 700;
+    padding: 4px 6px;
+    color: #fff;
+    background: var(--step-color, #999);
+    border-radius: 3px 3px 0 0;
+    text-transform: uppercase;
+    letter-spacing: .3px;
+  }
+  .vsm-step-body {
+    padding: 8px 6px;
+  }
+  .vsm-step-name {
+    font-size: .78rem;
+    font-weight: 600;
+    margin-bottom: 6px;
+    line-height: 1.2;
+  }
+  .vsm-step-metrics {
+    display: flex;
+    justify-content: center;
+    gap: 6px;
+    font-size: .65rem;
+  }
+  .vsm-metric {
+    text-align: center;
+    line-height: 1.2;
+  }
+  .vsm-metric-val {
+    font-weight: 700;
+    font-size: .8rem;
+  }
+  .vsm-metric-lbl {
+    color: #666;
+    font-size: .6rem;
+    display: block;
+  }
+
+  /* ── Timeline bar below each step ── */
+  .vsm-timeline {
+    display: flex;
+    align-items: stretch;
+    height: 36px;
+    margin-top: 2px;
+    font-size: .6rem;
+  }
+  .vsm-tl-wait {
+    background: #fef3c7;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #92400e;
+    font-weight: 600;
+    border: 1px dashed #fbbf24;
+    min-width: 30px;
+  }
+  .vsm-tl-work {
+    background: var(--step-color, #ddd);
+    opacity: .25;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #000;
+    font-weight: 600;
+    min-width: 30px;
+  }
+
+  /* ── Arrow between steps ── */
+  .vsm-arrow {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-width: var(--arrow-w);
+    flex-shrink: 0;
+    position: relative;
+  }
+  .vsm-arrow-line {
+    width: 100%;
+    height: 2px;
+    background: #333;
+    position: relative;
+  }
+  .vsm-arrow-line::after {
+    content: '';
+    position: absolute;
+    right: 0;
+    top: -5px;
+    border: 6px solid transparent;
+    border-left: 8px solid #333;
+  }
+  .vsm-arrow-wait {
+    font-size: .65rem;
+    color: #dc2626;
+    font-weight: 600;
+    margin-top: 2px;
+  }
+
+  /* ── Push arrow (yellow circle) ── */
+  .vsm-push-icon {
+    width: 28px;
+    height: 28px;
+    background: #fbbf24;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: .8rem;
+    margin-bottom: 4px;
+    border: 2px solid #f59e0b;
+  }
+
+  /* ── Loop indicator ── */
+  .vsm-loop-badge {
+    position: absolute;
+    top: -12px;
+    right: -8px;
+    background: #ef4444;
+    color: #fff;
+    font-size: .6rem;
+    font-weight: 700;
+    padding: 1px 5px;
+    border-radius: 8px;
+    z-index: 2;
+  }
+
+  /* ── Summary table ── */
+  .vsm-summary-table th,
+  .vsm-summary-table td {
+    padding: .4rem .6rem;
+    font-size: .8rem;
+    vertical-align: middle;
+  }
+  .vsm-summary-table .cat-dot {
+    display: inline-block;
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    margin-right: 6px;
+    vertical-align: middle;
+  }
+  .pct {
+    font-size: .7rem;
+    font-weight: 600;
+  }
+  .pct-magenta { color: #db2777; }
+  .pct-cyan { color: #0891b2; }
+  .lead-time-total {
+    font-size: 1.6rem;
+    font-weight: 800;
+    color: #dc2626;
+  }
+
+  /* ── Legend ── */
+  .vsm-legend {
+    display: flex;
+    gap: 1.5rem;
+    flex-wrap: wrap;
+    font-size: .75rem;
+    align-items: center;
+  }
+  .vsm-legend-item { display: flex; align-items: center; gap: 4px; }
+  .vsm-legend-box {
+    width: 18px;
+    height: 14px;
+    border-radius: 2px;
+    display: inline-block;
+  }
+
+  /* ── Metrics box ── */
+  .vsm-info-box {
+    background: #fffbeb;
+    border: 1px solid #fcd34d;
+    border-radius: 6px;
+    padding: 12px 16px;
+    font-size: .8rem;
+  }
+
+  /* ── Row label ── */
+  .vsm-row-container {
+    border: 2px solid #e5e7eb;
+    border-radius: 8px;
+    padding: 1rem;
+    margin-bottom: 1.5rem;
+    background: #fafafa;
+  }
+  .vsm-row-label {
+    font-weight: 700;
+    font-size: .85rem;
+    color: #374151;
+    margin-bottom: .5rem;
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="row mb-3">
+  <div class="col-12">
+    <nav aria-label="breadcrumb">
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{% url 'vsm:index' %}">Home</a></li>
+        {% if vs.project %}
+        <li class="breadcrumb-item"><a href="{% url 'vsm:project_detail' slug=vs.project.slug %}">{{ vs.project.name }}</a></li>
+        {% endif %}
+        <li class="breadcrumb-item"><a href="{% url 'vsm:vsm_map_list' %}">Value Stream Maps</a></li>
+        <li class="breadcrumb-item active">{{ vs.name }}</li>
+      </ol>
+    </nav>
+    <h2>📊 {{ vs.name }}</h2>
+    {% if vs.description %}
+    <p class="text-muted">{{ vs.description }}</p>
+    {% endif %}
+  </div>
+</div>
+
+<!-- Metrics definitions -->
+<div class="row mb-4">
+  <div class="col-lg-8">
+    <div class="vsm-info-box">
+      <strong>Métricas del flujo</strong>
+      <ul class="mb-0 mt-1">
+        <li><strong>Cycle Time</strong>: Tiempo que tarda una unidad en pasar por un proceso específico.</li>
+        <li><strong>Touch Time / Process Time</strong>: Tiempo real de trabajo activo en la unidad.</li>
+        <li><strong>Waste Time / Wait Time</strong>: Tiempo de espera desde el final de una actividad al comienzo de otra.</li>
+        <li><strong>Lead Time</strong>: Tiempo total desde que se inicia una orden hasta que se entrega al cliente.</li>
+      </ul>
+    </div>
+  </div>
+  <div class="col-lg-4">
+    <div class="vsm-info-box">
+      <strong>A tener en cuenta (por actividad):</strong>
+      <ul class="mb-0 mt-1">
+        <li>Unidad de medida temporal (horas, días, …)</li>
+        <li>Personas que intervienen</li>
+        <li>¿Cuánto dura 1 sprint?</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- Legend -->
+<div class="row mb-3">
+  <div class="col-12">
+    <div class="vsm-legend">
+      <div class="vsm-legend-item">
+        <div class="vsm-push-icon" style="width:20px;height:20px;font-size:.6rem;">⬆</div>
+        <span>Push</span>
+      </div>
+      <div class="vsm-legend-item">
+        <div class="vsm-legend-box" style="background:#fef3c7;border:1px dashed #fbbf24;"></div>
+        <span>Wait Time</span>
+      </div>
+      <div class="vsm-legend-item">
+        <div class="vsm-legend-box" style="background:#d1d5db;"></div>
+        <span>Work Time</span>
+      </div>
+      <div class="vsm-legend-item">
+        <span class="badge bg-danger" style="font-size:.6rem;">x0.3</span>
+        <span>Loop / Rework</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Flow Diagram Rows -->
+{% for row_num, steps in step_rows.items %}
+<div class="vsm-row-container">
+  <div class="vsm-row-label">
+    {% if row_num == 0 %}Flujo principal{% else %}Flujo secundario (fila {{ row_num }}){% endif %}
+  </div>
+  <div class="vsm-flow-row">
+    {% for step in steps %}
+      {% if not forloop.first %}
+      <!-- Arrow -->
+      <div class="vsm-arrow">
+        {% if step.flow_type == "push" %}
+        <div class="vsm-push-icon">⬆</div>
+        {% endif %}
+        <div class="vsm-arrow-line"></div>
+        {% if step.wait_time > 0 %}
+        <div class="vsm-arrow-wait">{{ step.wait_time }}h espera</div>
+        {% endif %}
+      </div>
+      {% endif %}
+
+      <!-- Step card -->
+      <div class="vsm-step" style="--step-color: {{ step.color }};">
+        {% if step.loop_factor > 0 %}
+        <div class="vsm-loop-badge">x{{ step.loop_factor }}</div>
+        {% endif %}
+        <div class="vsm-step-header">{{ step.category_name }}</div>
+        <div class="vsm-step-body">
+          <div class="vsm-step-name">{{ step.name }}</div>
+          <div class="vsm-step-metrics">
+            <div class="vsm-metric">
+              <span class="vsm-metric-val">{{ step.work_time }}h</span>
+              <span class="vsm-metric-lbl">trabajo</span>
+            </div>
+            {% if step.loop_time > 0 %}
+            <div class="vsm-metric">
+              <span class="vsm-metric-val" style="color:#ef4444;">+{{ step.loop_time|floatformat:1 }}h</span>
+              <span class="vsm-metric-lbl">bucle</span>
+            </div>
+            {% endif %}
+            {% if step.num_people > 1 %}
+            <div class="vsm-metric">
+              <span class="vsm-metric-val">{{ step.num_people }}</span>
+              <span class="vsm-metric-lbl">personas</span>
+            </div>
+            {% endif %}
+          </div>
+        </div>
+        <!-- Timeline bar -->
+        <div class="vsm-timeline">
+          {% if step.wait_time > 0 %}
+          <div class="vsm-tl-wait" style="flex:{{ step.wait_time }};">{{ step.wait_time }}h</div>
+          {% endif %}
+          <div class="vsm-tl-work" style="flex:{{ step.effective_work }};">{{ step.work_time }}h</div>
+        </div>
+      </div>
+    {% endfor %}
+  </div>
+</div>
+{% endfor %}
+
+<!-- Summary Table -->
+<div class="row mt-4">
+  <div class="col-12">
+    <h4>Resumen de tiempos por categoría</h4>
+    <div class="table-responsive">
+      <table class="table table-bordered vsm-summary-table">
+        <thead class="table-dark">
+          <tr>
+            <th></th>
+            <th>Categoría</th>
+            <th class="text-center">Tiempo de trabajo</th>
+            <th class="text-center">Tiempo de bucles (trabajo)</th>
+            <th class="text-center">Tiempo de espera</th>
+            <th class="text-center">Tiempo total</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for slug, data in summary %}
+          <tr>
+            <td class="text-center">
+              <span class="cat-dot" style="background:{{ data.color }};"></span>
+            </td>
+            <td><strong>{{ data.name }}</strong></td>
+            <td class="text-center">
+              {{ data.work_time|floatformat:1 }}h<br>
+              <span class="pct pct-magenta">{{ data.work_pct|floatformat:2 }}%</span>
+            </td>
+            <td class="text-center">
+              {{ data.loop_time|floatformat:1 }}h<br>
+              <span class="pct pct-magenta">{{ data.loop_pct|floatformat:2 }}%</span>
+            </td>
+            <td class="text-center">
+              {{ data.wait_time|floatformat:1 }}h<br>
+              <span class="pct pct-cyan">{{ data.wait_pct|floatformat:2 }}%</span>
+            </td>
+            <td class="text-center">
+              <strong>{{ data.total|floatformat:1 }}h</strong><br>
+              <span class="pct pct-magenta">{{ data.total_pct|floatformat:2 }}%</span>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+        <tfoot>
+          <tr class="table-warning">
+            <td></td>
+            <td><strong>Lead Time</strong></td>
+            <td class="text-center">
+              <strong>{{ total_work|floatformat:1 }}h</strong><br>
+              <span class="pct pct-magenta">{{ work_pct|floatformat:2 }}%</span>
+            </td>
+            <td class="text-center">
+              <strong>{{ total_loop|floatformat:1 }}h</strong><br>
+              <span class="pct pct-magenta">{{ loop_pct|floatformat:2 }}%</span>
+            </td>
+            <td class="text-center">
+              <strong>{{ total_wait|floatformat:1 }}h</strong><br>
+              <span class="pct pct-cyan">{{ wait_pct|floatformat:2 }}%</span>
+            </td>
+            <td class="text-center">
+              <span class="lead-time-total">{{ lead_time|floatformat:1 }}h</span>
+            </td>
+          </tr>
+        </tfoot>
+      </table>
+    </div>
+  </div>
+</div>
+
+{# ── AI Suggestions Section ── #}
+<div class="container-fluid px-4 mt-4 mb-5">
+  {% if can_manage and ai_configured %}
+  <div class="d-flex justify-content-end mb-3">
+    <form method="post" action="{% url 'vsm:vsm_suggestions' slug=vs.slug %}" id="suggestions-form">
+      {% csrf_token %}
+      <button type="submit" class="btn btn-outline-info" id="btn-suggestions">
+        <i class="bi bi-lightbulb me-1"></i> Sugerir mejoras con IA
+      </button>
+    </form>
+  </div>
+  {% endif %}
+
+  {% if vs.ai_suggestions %}
+  <div class="card border-info">
+    <div class="card-header bg-info bg-opacity-10 text-info-emphasis">
+      <i class="bi bi-lightbulb-fill me-1"></i> Sugerencias de mejora (IA)
+    </div>
+    <div class="card-body" id="suggestions-content"></div>
+  </div>
+  {% endif %}
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+  var form = document.getElementById("suggestions-form");
+  if (form) {
+    form.addEventListener("submit", function () {
+      var btn = document.getElementById("btn-suggestions");
+      btn.disabled = true;
+      btn.innerHTML = '<span class="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true"></span> Generando sugerencias…';
+    });
+  }
+
+  var el = document.getElementById("suggestions-content");
+  if (el) {
+    var raw = "{{ vs.ai_suggestions|escapejs }}";
+    el.innerHTML = marked.parse(raw);
+  }
+});
+</script>
+{% endblock %}
