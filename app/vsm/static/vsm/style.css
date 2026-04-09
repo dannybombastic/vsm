@@ -46,3 +46,29 @@ form div[id^="id_"] > div input[type="checkbox"] {
 .card-header {
   font-weight: 600;
 }
+
+/* ── Dark mode overrides ── */
+[data-bs-theme="dark"] body {
+  background-color: #212529;
+}
+
+[data-bs-theme="dark"] .editable-cell:focus {
+  background-color: #2b3035;
+}
+
+#theme-toggle {
+  font-size: 1.15rem;
+  line-height: 1;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  padding: .25rem .5rem;
+}
+
+[data-bs-theme="dark"] .card {
+  border-color: rgba(255, 255, 255, .1);
+}
+
+[data-bs-theme="dark"] footer {
+  border-color: rgba(255, 255, 255, .1) !important;
+}

@@ -1,7 +1,7 @@
 {% load static %}
 {% load i18n %}
 <!DOCTYPE html>
-<html lang="{{ LANGUAGE_CODE }}">
+<html lang="{{ LANGUAGE_CODE }}" data-bs-theme="light">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -45,6 +45,11 @@
             <a class="nav-link" href="{% url 'vsm:login' %}">🔑 {% trans "Sign in" %}</a>
           </li>
           {% endif %}
+          <li class="nav-item ms-2">
+            <button class="btn btn-outline-light btn-sm nav-link d-inline" id="theme-toggle" title="{% trans 'Toggle dark mode' %}">
+              🌙
+            </button>
+          </li>
           <li class="nav-item dropdown ms-2">
             <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
               🌐 {% if LANGUAGE_CODE == 'es' %}Español{% else %}English{% endif %}
@@ -85,6 +90,28 @@
           integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
           crossorigin="anonymous"></script>
   <script src="https://cdn.jsdelivr.net/npm/intro.js@7.2.0/minified/intro.min.js"></script>
+  <script>
+    (function(){
+      var html = document.documentElement;
+      var btn = document.getElementById("theme-toggle");
+      var saved = localStorage.getItem("theme");
+      if (saved) {
+        html.setAttribute("data-bs-theme", saved);
+      } else if (window.matchMedia("(prefers-color-scheme: dark)").matches) {
+        html.setAttribute("data-bs-theme", "dark");
+      }
+      function updateIcon() {
+        btn.textContent = html.getAttribute("data-bs-theme") === "dark" ? "☀️" : "🌙";
+      }
+      updateIcon();
+      btn.addEventListener("click", function(){
+        var next = html.getAttribute("data-bs-theme") === "dark" ? "light" : "dark";
+        html.setAttribute("data-bs-theme", next);
+        localStorage.setItem("theme", next);
+        updateIcon();
+      });
+    })();
+  </script>
   {% block extra_js %}{% endblock %}
 </body>
 </html>

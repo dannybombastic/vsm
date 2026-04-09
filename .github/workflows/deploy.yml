@@ -36,7 +36,7 @@ jobs:
         uses: dannybombastic/ssh-scp-ssh-pipelines@v1.1.5
         with:
           host: ${{ secrets.REMOTE_HOST }}
-          port: 22
+          port: 8549
           user: ${{ secrets.REMOTE_USER }}
           pass: ${{ secrets.REMOTE_PASS }}
           connect_timeout: 30s
