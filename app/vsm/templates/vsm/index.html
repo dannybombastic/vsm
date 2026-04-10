@@ -1,10 +1,22 @@
 {% extends "vsm/base.html" %}
 {% load i18n %}
+{% load static %}
 
 {% block title %}ATHINA – Value Stream Map{% endblock %}
 
 {% block extra_head %}
 <style>
+  .hero-bg {
+    background: linear-gradient(135deg, rgba(13,110,253,.12) 0%, rgba(111,66,193,.08) 100%),
+                url("{% static 'vsm/bg-hero.png' %}") center center / cover no-repeat;
+    border-radius: .75rem;
+    padding: 2rem 1.5rem;
+    margin-bottom: 1.5rem;
+  }
+  [data-bs-theme="dark"] .hero-bg {
+    background: linear-gradient(135deg, rgba(13,110,253,.2) 0%, rgba(111,66,193,.15) 100%),
+                url("{% static 'vsm/bg-hero.png' %}") center center / cover no-repeat;
+  }
   .nav-card {
     transition: transform .15s;
     cursor: pointer;
@@ -84,15 +96,15 @@
 
 {% block content %}
 <!-- Hero Section -->
-<div class="row mb-4" id="hero-section" data-intro="{% trans 'Welcome to ATHINA VSM! This tool helps you generate Value Stream Maps from team questionnaires.' %}" data-step="1">
-  <div class="col-12 d-flex flex-wrap align-items-center justify-content-between gap-2">
+<div class="hero-bg" id="hero-section" data-intro="{% trans 'Welcome to ATHINA VSM! This tool helps you generate Value Stream Maps from team questionnaires.' %}" data-step="1">
+  <div class="d-flex flex-wrap align-items-center justify-content-between gap-2">
     <div>
-      <h2>🏭 ATHINA – Value Stream Mapping</h2>
-      <p class="text-muted mb-0">
+      <h2 class="text-white">🏭 ATHINA – Value Stream Mapping</h2>
+      <p class="text-white-50 mb-0">
         {% trans "Tool for analysis and generation of Value Stream Maps from team questionnaires." %}
       </p>
     </div>
-    <button class="btn btn-outline-info btn-sm" id="btn-tutorial" title="{% trans 'Start tutorial' %}">
+    <button class="btn btn-outline-light btn-sm" id="btn-tutorial" title="{% trans 'Start tutorial' %}">
       ❓ {% trans "Tutorial" %}
     </button>
   </div>

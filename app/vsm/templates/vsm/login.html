@@ -12,7 +12,11 @@
         crossorigin="anonymous">
   <link rel="stylesheet" href="{% static 'vsm/style.css' %}">
   <style>
-    body { background: linear-gradient(135deg, #1e1e2f 0%, #2d2d44 100%); min-height: 100vh; }
+    body {
+      background: linear-gradient(135deg, rgba(30,30,47,.85) 0%, rgba(45,45,68,.85) 100%),
+                  url("{% static 'vsm/bg-hero.png' %}") center center / cover no-repeat fixed;
+      min-height: 100vh;
+    }
     .login-card { max-width: 420px; margin: 8vh auto; }
   </style>
 </head>
