@@ -1,6 +1,7 @@
 {% extends "vsm/base.html" %}
+{% load i18n %}
 
-{% block title %}{{ vs.name }} – Value Stream Map{% endblock %}
+{% block title %}{{ vs.name }} – {% trans "Value Stream Map" %}{% endblock %}
 
 {% block extra_head %}
 <style>
@@ -265,11 +266,11 @@
   <div class="col-12">
     <nav aria-label="breadcrumb">
       <ol class="breadcrumb">
-        <li class="breadcrumb-item"><a href="{% url 'vsm:index' %}">Home</a></li>
+        <li class="breadcrumb-item"><a href="{% url 'vsm:index' %}">{% trans "Home" %}</a></li>
         {% if vs.project %}
         <li class="breadcrumb-item"><a href="{% url 'vsm:project_detail' slug=vs.project.slug %}">{{ vs.project.name }}</a></li>
         {% endif %}
-        <li class="breadcrumb-item"><a href="{% url 'vsm:vsm_map_list' %}">Value Stream Maps</a></li>
+        <li class="breadcrumb-item"><a href="{% url 'vsm:vsm_map_list' %}">{% trans "Value Stream Maps" %}</a></li>
         <li class="breadcrumb-item active">{{ vs.name }}</li>
       </ol>
     </nav>
@@ -284,22 +285,22 @@
 <div class="row mb-4">
   <div class="col-lg-8">
     <div class="vsm-info-box">
-      <strong>Métricas del flujo</strong>
+      <strong>{% trans "Flow Metrics" %}</strong>
       <ul class="mb-0 mt-1">
-        <li><strong>Cycle Time</strong>: Tiempo que tarda una unidad en pasar por un proceso específico.</li>
-        <li><strong>Touch Time / Process Time</strong>: Tiempo real de trabajo activo en la unidad.</li>
-        <li><strong>Waste Time / Wait Time</strong>: Tiempo de espera desde el final de una actividad al comienzo de otra.</li>
-        <li><strong>Lead Time</strong>: Tiempo total desde que se inicia una orden hasta que se entrega al cliente.</li>
+        <li><strong>Cycle Time</strong>: {% trans "Time it takes for a unit to pass through a specific process." %}</li>
+        <li><strong>Touch Time / Process Time</strong>: {% trans "Actual active work time on the unit." %}</li>
+        <li><strong>Waste Time / Wait Time</strong>: {% trans "Wait time from the end of one activity to the start of another." %}</li>
+        <li><strong>Lead Time</strong>: {% trans "Total time from order start to customer delivery." %}</li>
       </ul>
     </div>
   </div>
   <div class="col-lg-4">
     <div class="vsm-info-box">
-      <strong>A tener en cuenta (por actividad):</strong>
+      <strong>{% trans "Keep in mind (per activity):" %}</strong>
       <ul class="mb-0 mt-1">
-        <li>Unidad de medida temporal (horas, días, …)</li>
-        <li>Personas que intervienen</li>
-        <li>¿Cuánto dura 1 sprint?</li>
+        <li>{% trans "Time unit (hours, days, …)" %}</li>
+        <li>{% trans "People involved" %}</li>
+        <li>{% trans "How long is 1 sprint?" %}</li>
       </ul>
     </div>
   </div>
@@ -315,15 +316,15 @@
       </div>
       <div class="vsm-legend-item">
         <div class="vsm-legend-box" style="background:#fef3c7;border:1px dashed #fbbf24;"></div>
-        <span>Wait Time</span>
+        <span>{% trans "Wait Time" %}</span>
       </div>
       <div class="vsm-legend-item">
         <div class="vsm-legend-box" style="background:#d1d5db;"></div>
-        <span>Work Time</span>
+        <span>{% trans "Work Time" %}</span>
       </div>
       <div class="vsm-legend-item">
         <span class="badge bg-danger" style="font-size:.6rem;">x0.3</span>
-        <span>Loop / Rework</span>
+        <span>{% trans "Loop / Rework" %}</span>
       </div>
     </div>
   </div>
@@ -333,7 +334,7 @@
 {% for row_num, steps in step_rows.items %}
 <div class="vsm-row-container">
   <div class="vsm-row-label">
-    {% if row_num == 0 %}Flujo principal{% else %}Flujo secundario (fila {{ row_num }}){% endif %}
+    {% if row_num == 0 %}{% trans "Main flow" %}{% else %}{% trans "Secondary flow" %} ({% trans "row" %} {{ row_num }}){% endif %}
   </div>
   <div class="vsm-flow-row">
     {% for step in steps %}
@@ -345,7 +346,7 @@
         {% endif %}
         <div class="vsm-arrow-line"></div>
         {% if step.wait_time > 0 %}
-        <div class="vsm-arrow-wait">{{ step.wait_time }}h espera</div>
+        <div class="vsm-arrow-wait">{{ step.wait_time }}h {% trans "wait" %}</div>
         {% endif %}
       </div>
       {% endif %}
@@ -361,18 +362,18 @@
           <div class="vsm-step-metrics">
             <div class="vsm-metric">
               <span class="vsm-metric-val">{{ step.work_time }}h</span>
-              <span class="vsm-metric-lbl">trabajo</span>
+              <span class="vsm-metric-lbl">{% trans "work" %}</span>
             </div>
             {% if step.loop_time > 0 %}
             <div class="vsm-metric">
               <span class="vsm-metric-val" style="color:#ef4444;">+{{ step.loop_time|floatformat:1 }}h</span>
-              <span class="vsm-metric-lbl">bucle</span>
+              <span class="vsm-metric-lbl">{% trans "loop" %}</span>
             </div>
             {% endif %}
             {% if step.num_people > 1 %}
             <div class="vsm-metric">
               <span class="vsm-metric-val">{{ step.num_people }}</span>
-              <span class="vsm-metric-lbl">personas</span>
+              <span class="vsm-metric-lbl">{% trans "people" %}</span>
             </div>
             {% endif %}
           </div>
@@ -393,17 +394,17 @@
 <!-- Summary Table -->
 <div class="row mt-4">
   <div class="col-12">
-    <h4>Resumen de tiempos por categoría</h4>
+    <h4>{% trans "Time summary by category" %}</h4>
     <div class="table-responsive">
       <table class="table table-bordered vsm-summary-table">
         <thead class="table-dark">
           <tr>
             <th></th>
-            <th>Categoría</th>
-            <th class="text-center">Tiempo de trabajo</th>
-            <th class="text-center">Tiempo de bucles (trabajo)</th>
-            <th class="text-center">Tiempo de espera</th>
-            <th class="text-center">Tiempo total</th>
+            <th>{% trans "Category" %}</th>
+            <th class="text-center">{% trans "Work time" %}</th>
+            <th class="text-center">{% trans "Loop time (work)" %}</th>
+            <th class="text-center">{% trans "Wait time" %}</th>
+            <th class="text-center">{% trans "Total time" %}</th>
           </tr>
         </thead>
         <tbody>
@@ -465,7 +466,7 @@
     <form method="post" action="{% url 'vsm:vsm_suggestions' slug=vs.slug %}" id="suggestions-form">
       {% csrf_token %}
       <button type="submit" class="btn btn-outline-info" id="btn-suggestions">
-        <i class="bi bi-lightbulb me-1"></i> Sugerir mejoras con IA
+        <i class="bi bi-lightbulb me-1"></i> {% trans "Suggest improvements with AI" %}
       </button>
     </form>
   </div>
@@ -474,7 +475,7 @@
   {% if vs.ai_suggestions %}
   <div class="card border-info">
     <div class="card-header bg-info bg-opacity-10 text-info-emphasis">
-      <i class="bi bi-lightbulb-fill me-1"></i> Sugerencias de mejora (IA)
+      <i class="bi bi-lightbulb-fill me-1"></i> {% trans "Improvement suggestions (AI)" %}
     </div>
     <div class="card-body" id="suggestions-content"></div>
   </div>
@@ -489,7 +490,7 @@ document.addEventListener("DOMContentLoaded", function () {
     form.addEventListener("submit", function () {
       var btn = document.getElementById("btn-suggestions");
       btn.disabled = true;
-      btn.innerHTML = '<span class="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true"></span> Generando sugerencias…';
+      btn.innerHTML = '<span class="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true"></span> {% trans "Generating suggestions…" %}';
     });
   }
 

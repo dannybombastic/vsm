@@ -480,3 +480,94 @@ msgstr "Usuario o contraseña incorrectos. Inténtalo de nuevo."
 
 msgid "Logout"
 msgstr "Cerrar sesión"
+
+# ── vsm_map.html ─────────────────────────────────────────────────
+
+msgid "Flow Metrics"
+msgstr "Métricas del flujo"
+
+msgid "Time it takes for a unit to pass through a specific process."
+msgstr "Tiempo que tarda una unidad en pasar por un proceso específico."
+
+msgid "Actual active work time on the unit."
+msgstr "Tiempo real de trabajo activo en la unidad."
+
+msgid "Wait time from the end of one activity to the start of another."
+msgstr "Tiempo de espera desde el final de una actividad al comienzo de otra."
+
+msgid "Total time from order start to customer delivery."
+msgstr "Tiempo total desde que se inicia una orden hasta que se entrega al cliente."
+
+msgid "Keep in mind (per activity):"
+msgstr "A tener en cuenta (por actividad):"
+
+msgid "Time unit (hours, days, …)"
+msgstr "Unidad de medida temporal (horas, días, …)"
+
+msgid "People involved"
+msgstr "Personas que intervienen"
+
+msgid "How long is 1 sprint?"
+msgstr "¿Cuánto dura 1 sprint?"
+
+msgid "Wait Time"
+msgstr "Tiempo de espera"
+
+msgid "Work Time"
+msgstr "Tiempo de trabajo"
+
+msgid "Loop / Rework"
+msgstr "Bucle / Retrabajo"
+
+msgid "Main flow"
+msgstr "Flujo principal"
+
+msgid "Secondary flow"
+msgstr "Flujo secundario"
+
+msgid "row"
+msgstr "fila"
+
+msgid "wait"
+msgstr "espera"
+
+msgid "work"
+msgstr "trabajo"
+
+msgid "loop"
+msgstr "bucle"
+
+msgid "people"
+msgstr "personas"
+
+msgid "Time summary by category"
+msgstr "Resumen de tiempos por categoría"
+
+msgid "Category"
+msgstr "Categoría"
+
+msgid "Work time"
+msgstr "Tiempo de trabajo"
+
+msgid "Loop time (work)"
+msgstr "Tiempo de bucles (trabajo)"
+
+msgid "Wait time"
+msgstr "Tiempo de espera"
+
+msgid "Total time"
+msgstr "Tiempo total"
+
+msgid "Suggest improvements with AI"
+msgstr "Sugerir mejoras con IA"
+
+msgid "Improvement suggestions (AI)"
+msgstr "Sugerencias de mejora (IA)"
+
+msgid "Generating suggestions…"
+msgstr "Generando sugerencias…"
+
+# ── base.html ────────────────────────────────────────────────────
+
+msgid "Toggle dark mode"
+msgstr "Cambiar modo oscuro"
