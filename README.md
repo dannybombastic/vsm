@@ -1,152 +1,172 @@
-# Value Stream Mapping (VSM) Initiative — ATHINA Project
+# 📊 ATHINA VSM – Value Stream Mapping Tool
 
-## Purpose
+> Web app for generating and visualizing Value Stream Maps from team questionnaires, powered by AI.
 
-This initiative aims to **map the complete delivery value stream** across all teams in the ATHINA project. By understanding the steps, handoffs, pain points, and dependencies each team faces, we can identify bottlenecks, eliminate waste, and improve our end-to-end delivery capability.
+**Live:** [vsm.devspn.tech](https://vsm.devspn.tech) · **Stack:** Django 5.1 · PostgreSQL 16 · Bootstrap 5.3 · OpenAI · Docker
 
-As the DevOps lead, I will consolidate all team responses into a unified Value Stream Map to drive continuous improvement across the organization.
+---
 
-## Delivery Chain Overview
+## Quick Start (Docker)
 
-```
-┌──────────────┐     ┌──────────────┐     ┌──────────────┐     ┌──────────────┐
-│  End Client  │────▶│  Management  │────▶│    Agile /   │────▶│  Delivery    │
-│  (External)  │     │  (Business)  │     │  Scrum Team  │     │  Teams       │
-└──────────────┘     └──────────────┘     └──────────────┘     └──────────────┘
-                                                                 │
-                                                ┌────────────────┼────────────────┐
-                                                │                │                │
-                                           ┌────▼───┐       ┌────▼───┐       ┌────▼───┐
-                                           │  Dev   │       │  QA /  │       │  UX /  │
-                                           │  Team  │       │ Testing│       │ Design │
-                                           └────┬───┘       └────┬───┘       └────┬───┘
-                                           ┌────▼────┐      ┌────▼────┐           │
-                                           │ Data /  │      │ DevOps /│           │
-                                           │Analytics│      │Platform │           │
-                                           └────┬────┘      └────┬────┘           │
-                                                │                │                │
-                                                │                │                │
-                                                └────────────────┼────────────────┘
-                                                                 │
-                                                           ┌─────▼─────┐
-                                                           │  Felipe   │
-                                                           │(Tech Lead)│
-                                                           └─────┬─────┘
-                                                                 │
-                                                           ┌─────▼─────┐
-                                                           │ Management│
-                                                           │ (Review)  │
-                                                           └─────┬─────┘
-                                                                 │
-                                                           ┌─────▼─────┐
-                                                           │End Client │
-                                                           └───────────┘
+```bash
+cd app
+cp .env.example .env          # edit with your values
+docker compose up -d --build
+docker compose exec web python manage.py createsuperuser
 ```
 
-### Client-Supplier Relationships
+The app runs at **http://localhost:8001**. Admin panel at `/admin/`.
 
-| Team | Their Client (who they deliver to) | Their Supplier (who gives them work) |
-|------|-----------------------------------|--------------------------------------|
-| **Management** | Business Stakeholders / End Client | All delivery teams (status, demos, releases) |
-| **Agile / Scrum** | All delivery teams (refined backlog) | Management (priorities), End Users (feedback) |
-| **Developers** | Felipe (Tech Lead) | Agile (refined stories), UX (designs), QA (defects) |
-| **QA / Testing** | Developers (quality gates), Management (release confidence) | Developers (testable builds), Agile (acceptance criteria) |
-| **UX / Design** | Developers (implementable designs), Business (user experience) | Business/Management (requirements), End Users (feedback) |
-| **Data / Analytics** | Business/Management (insights, reports) | Developers (data pipelines), Business (data requirements) |
-| **DevOps / Platform** | All delivery teams (pipelines, environments, infrastructure) | Developers (pipeline requirements), Management (provisioning requests), Security (compliance) |
+### Environment Variables
 
-## Questionnaires
+| Variable | Description |
+|----------|-------------|
+| `SECRET_KEY` | Django secret key |
+| `DEBUG` | `0` for production, `1` for development |
+| `ALLOWED_HOSTS` | Comma-separated hostnames |
+| `POSTGRES_*` | Database credentials |
+| `CSRF_TRUSTED_ORIGINS` | HTTPS origin for CSRF (e.g. `https://vsm.devspn.tech`) |
 
-Each team has a dedicated questionnaire to fill out. All forms follow the same 6-section structure:
+> AI configuration (API key, model, endpoint) is managed from **Admin → AI Configurations**.
 
-| # | Questionnaire | Target Team |
-|---|---------------|-------------|
-| 1 | [01-developers-questionnaire.md](01-developers-questionnaire.md) | Developer Team |
-| 2 | [02-qa-testing-questionnaire.md](02-qa-testing-questionnaire.md) | QA / Testing Team |
-| 3 | [03-ux-design-questionnaire.md](03-ux-design-questionnaire.md) | UX / Design Team |
-| 4 | [04-data-analytics-questionnaire.md](04-data-analytics-questionnaire.md) | Data / Analytics Team |
-| 5 | [05-agile-questionnaire.md](05-agile-questionnaire.md) | Agile / Scrum Team |
-| 6 | [06-management-questionnaire.md](06-management-questionnaire.md) | Management Team |
-| 7 | [07-devops-questionnaire.md](07-devops-questionnaire.md) | DevOps / Platform Team |
+---
 
-### Questionnaire Structure (same for all teams)
+## How to Use the App
 
-Each form has 6 sections:
+### Option A: Questionnaire Flow (with AI)
 
-| Section | Focus |
-|---------|-------|
-| **A — Team Identity** | Role definition, client, supplier |
-| **B — Process Steps** | Ordered steps per work item type (Feature, Bug Fix, Other) |
-| **C — Handoffs & Dependencies** | Who gives you work, who receives your output |
-| **D — Pain Points & Waste** | Blockers, rework, waiting, unclear requirements |
-| **E — Tools & Systems** | What tools are used at each step |
-| **F — Improvement Ideas** | What would make delivery faster or better |
+| Step | What to do |
+|------|------------|
+| **1. Create a Project** | Go to **Projects** → create or select one. Projects group questionnaires and VSMs. |
+| **2. Fill Questionnaires** | Inside the project, each team fills their department questionnaire with process metrics, times and pain points. |
+| **3. Review Responses** | Check that enough teams have responded before generating. |
+| **4. Generate VSM with AI** | Click **Generate VSM** — AI analyzes all responses and creates the map automatically. |
+| **5. Save the VSM** | Review the generated map, adjust if needed, and save. |
+| **6. Visualize** | Explore the interactive Value Stream Map with work times, wait times, rework loops and bottlenecks. |
+| **7. Get AI Suggestions** | Project managers can click **AI Suggestions** to get Lean/Six-Sigma improvement recommendations. |
+| **8. Iterate** | Collect new responses, regenerate and compare to track improvement. |
 
-## How to Fill Out Your Questionnaire
+### Option B: Admin Flow (Manual)
 
-1. **Open your team's questionnaire** from the table above
-2. **Fill in each section** honestly and completely — there are no wrong answers
-3. **Be specific** — instead of "deployment is slow", say "deploying to UAT takes 2 days because we wait for environment availability"
-4. **Think about all work item types** — features, bug fixes, and any other deliverable
-5. **Include every step** — even small ones like "wait for approval" or "send a Teams message"
-6. **Note pain points** — anything that causes delay, rework, confusion, or frustration
-7. **Submit** your completed form via a Pull Request or by sharing the filled document
+| Step | What to do |
+|------|------------|
+| **1. Create Departments** | Admin → **Categories** → add departments (Developers, QA, UX, etc.) |
+| **2. Create Forms** | Admin → **Sections** + **Questions** → configure questionnaire per department |
+| **3. Create Projects** | Admin → **Projects** → create project with name, slug, color |
+| **4. Create VSM Manually** | Admin → **Value Streams** → add steps with work/wait times, loop factors, people count |
 
-> **Tip**: Walk through a recent real example (a feature you delivered or a bug you fixed) as you fill out the form. Concrete examples produce the best insights.
+---
 
-## Timeline
+## User Roles & Permissions
 
-| Phase | Activity | Owner |
-|-------|----------|-------|
-| **Week 1** | Distribute questionnaires to all teams | DevOps Lead |
-| **Week 2** | Teams fill out their questionnaires | All Teams |
-| **Week 3** | Consolidate responses into unified VSM | DevOps Lead |
-| **Week 4** | Present findings and improvement proposals | DevOps Lead + All Teams |
+| Role | Can view | Can edit | Can manage |
+|------|----------|----------|------------|
+| **Viewer** | ✅ Projects & VSMs | ❌ | ❌ |
+| **Editor** | ✅ | ✅ Fill questionnaires, edit data | ❌ |
+| **Project Manager** | ✅ | ✅ | ✅ Generate VSM, AI suggestions, manage project |
+| **Admin** (superuser) | ✅ | ✅ | ✅ Full access + Django Admin |
 
-## What Happens After
+Users are assigned to projects via **Admin → Projects → Project Memberships**.
 
-Once all questionnaires are collected, the DevOps lead will:
+---
 
-1. **Build the unified Value Stream Map** using the [aggregation template](vsm-aggregation-template.md)
-2. **Identify bottlenecks** — steps where work piles up or waits
-3. **Map handoff friction** — transitions between teams that cause delays or rework
-4. **Catalog pain points** — grouped by theme and impact
-5. **Propose improvements** — prioritized by impact and feasibility
-6. **Present to all teams** — collaborative review and action planning
+## Admin Panel Guide
+
+Access at `/admin/` with a superuser account.
+
+### Data Structure
+
+```
+📁 Project
+├── 📝 FormResponse (questionnaire answers as JSON)
+│   └── 🏢 Category (department) → 📂 Section → ❓ Question
+├── 🗺️ ValueStream (VSM map)
+│   └── ⚙️ ProcessStep (work_time, wait_time, loop_factor, people)
+└── 📊 Diagram (Mermaid diagrams)
+```
+
+### Admin Sections
+
+| Section | Purpose |
+|---------|---------|
+| **AI Configurations** | Set OpenAI/Azure OpenAI API key, model, and endpoint |
+| **Categories** | Departments (Developers, QA, UX, Data, Agile, Management, DevOps) |
+| **Sections** | Form sections A–G per category |
+| **Questions** | Individual questions (text, textarea, checklist, table) |
+| **Projects** | Projects with name, slug, color, and member assignments |
+| **Form Responses** | Raw questionnaire answers (JSON) per project + category |
+| **Value Streams** | VSM maps with AI analysis and AI suggestions |
+| **Process Steps** | Individual steps in a VSM with time metrics |
+| **Diagrams** | Mermaid.js diagrams attached to projects |
+
+### Load Seed Data
+
+```bash
+docker compose exec web python manage.py load_questions    # 200+ questions in 7 departments
+docker compose exec web python manage.py load_diagrams     # Mermaid diagrams
+docker compose exec web python manage.py load_vsm_seed     # Demo VSM data
+docker compose exec web python manage.py load_test_data    # Test data
+```
+
+---
+
+## Features
+
+- 🌙 **Dark mode** — toggle in navbar, respects system preference
+- 🌐 **i18n** — Spanish and English
+- 🤖 **AI generation** — VSM from questionnaire responses (OpenAI / Azure OpenAI)
+- 💡 **AI suggestions** — Lean/Six-Sigma improvement recommendations
+- 📊 **Interactive VSM** — visual map with work/wait times, loops, push/pull flow
+- 🔒 **Role-based access** — viewer, editor, project manager, admin
+- ❓ **Guided tutorial** — Intro.js step-by-step walkthrough
+- 📋 **7 department questionnaires** — 200+ questions across A–G sections
+- 📈 **Mermaid diagrams** — embedded flow diagrams with zoom/pan
+
+---
+
+## Questionnaire Templates (Markdown)
+
+| # | File | Team |
+|---|------|------|
+| 1 | [01-developers-questionnaire.md](01-developers-questionnaire.md) | Developers |
+| 2 | [02-qa-testing-questionnaire.md](02-qa-testing-questionnaire.md) | QA / Testing |
+| 3 | [03-ux-design-questionnaire.md](03-ux-design-questionnaire.md) | UX / Design |
+| 4 | [04-data-analytics-questionnaire.md](04-data-analytics-questionnaire.md) | Data / Analytics |
+| 5 | [05-agile-questionnaire.md](05-agile-questionnaire.md) | Agile / Scrum |
+| 6 | [06-management-questionnaire.md](06-management-questionnaire.md) | Management |
+| 7 | [07-devops-questionnaire.md](07-devops-questionnaire.md) | DevOps / Platform |
+
+Each questionnaire has 7 sections: **A** Team Identity · **B** Process Steps · **C** Handoffs · **D** Pain Points · **E** Tools · **F** Improvements · **G** VSM Metrics.
+
+---
+
+## Tech Stack
+
+| Component | Technology |
+|-----------|-----------|
+| Backend | Django 5.1, Gunicorn |
+| Database | PostgreSQL 16 |
+| Frontend | Bootstrap 5.3.3, Mermaid.js 11, Intro.js 7.2, marked.js |
+| AI | OpenAI / Azure OpenAI SDK |
+| Static files | WhiteNoise |
+| Containerization | Docker, Docker Compose |
+| CI/CD | GitHub Actions → SSH deploy |
+| i18n | Django i18n (es/en) |
+
+---
 
 ## Glossary
 
 | Term | Definition |
 |------|-----------|
-| **Value Stream** | The sequence of all steps (value-adding and non-value-adding) required to deliver a product or service from request to delivery |
-| **Handoff** | The point where work transfers from one person or team to another |
-| **Lead Time** | Total elapsed time from when work is requested to when it is delivered |
-| **Process Time** | The actual time spent working on a task (excluding waiting) |
-| **Wait Time** | Time a work item spends idle, waiting for the next step |
-| **Waste (Muda)** | Any activity that consumes resources but creates no value for the customer |
-| **Bottleneck** | A constraint that limits the throughput of the entire system |
-| **WIP (Work in Progress)** | The number of items being worked on simultaneously |
-| **%C&A (% Complete & Accurate)** | The percentage of work received from upstream that is usable without rework |
-| **Rework** | Having to redo work due to defects, unclear requirements, or missed requirements |
-| **Shift-Left** | Moving activities (testing, security, feedback) earlier in the process |
-
-## ATHINA Pipeline Reference
-
-For context, our current CI/CD pipeline follows these stages:
-
-```
-Code Commit → Maven Build → Unit Tests → SonarQube Analysis → Docker Build
-    → Qualys Security Scan → Push to ACR → Container App Deploy (Blue-Green)
-    → Smoke Tests → Environment Promotion (dev → test → uat → acc → prd)
-```
-
-### Environments
-- **Development** (dev) — West Europe
-- **Testing** (test) — North Europe
-- **UAT** (uat) — North Europe
-- **Acceptance** (acc) — West Europe
-- **Production** (prd) — West Europe
+| **Value Stream** | All steps from request to delivery (value-adding and non-value-adding) |
+| **Lead Time** | Total time from request to delivery |
+| **Process Time** | Actual working time (excluding waiting) |
+| **Wait Time** | Time a work item sits idle |
+| **Bottleneck** | A constraint limiting overall throughput |
+| **Rework / Loop** | Redoing work due to defects or unclear requirements |
+| **%C&A** | % Complete & Accurate — work usable without rework |
 
 ---
 
-*This VSM initiative is led by the DevSecOps team as part of continuous improvement for the ATHINA project.*
+*ATHINA LOT1 · DevSecOps Team · Value Stream Mapping Tool*
