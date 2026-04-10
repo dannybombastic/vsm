@@ -104,9 +104,14 @@
         {% trans "Tool for analysis and generation of Value Stream Maps from team questionnaires." %}
       </p>
     </div>
-    <button class="btn btn-outline-light btn-sm" id="btn-tutorial" title="{% trans 'Start tutorial' %}">
-      ❓ {% trans "Tutorial" %}
-    </button>
+    <div class="d-flex gap-2">
+      <a href="{% static 'vsm/ATHINA_VSM_Engine.pdf' %}" class="btn btn-outline-light btn-sm" download>
+        📄 {% trans "Download Guide (PDF)" %}
+      </a>
+      <button class="btn btn-outline-light btn-sm" id="btn-tutorial" title="{% trans 'Start tutorial' %}">
+        ❓ {% trans "Tutorial" %}
+      </button>
+    </div>
   </div>
 </div>
 
