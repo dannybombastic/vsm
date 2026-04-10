@@ -218,11 +218,11 @@ msgstr "Construye el Mapa de Flujo de Valor manualmente desde Admin sin usar IA,
 
 # ── index.html – Admin card (updated) ───────────────────────────
 
-msgid "From Admin you can create departments, configure forms per department, create projects and build VSMs manually without AI."
-msgstr "Desde Admin puedes crear departamentos, configurar formularios por departamento, crear proyectos y construir VSMs manualmente sin IA."
+msgid "From Admin you can manage users and roles, create departments, configure forms, create projects and build VSMs manually."
+msgstr "Desde Admin puedes gestionar usuarios y roles, crear departamentos, configurar formularios, crear proyectos y construir VSMs manualmente."
 
-msgid "Create departments, forms, projects and VSMs manually."
-msgstr "Crea departamentos, formularios, proyectos y VSMs manualmente."
+msgid "Manage users, roles, departments, forms, projects and VSMs."
+msgstr "Gestiona usuarios, roles, departamentos, formularios, proyectos y VSMs."
 
 # ── project_list.html ────────────────────────────────────────────
 
